@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice - Codecade</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'VT323', monospace;
+            background: #000 url('/assets/images/background.jpg') center center / cover no-repeat fixed !important;
+            color: #e0e0e0;
+            font-size: 1.25rem;
+            line-height: 1.5;
+        }
+
+        :root {
+            --neon-pink: #ff1493;
+            --neon-purple: #9932cc;
+            --neon-magenta: #da70d6;
+            --neon-hotpink: #ff69b4;
+            --bg-dark: #2e1a47;
+            --bg-light: #4b2e72;
+        }
+
+        .text-glow-pink { color: var(--neon-pink); text-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink); }
+        .text-glow-purple { color: var(--neon-purple); text-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple); }
+        .text-glow-magenta { color: var(--neon-magenta); text-shadow: 0 0 5px var(--neon-magenta), 0 0 10px var(--neon-magenta); }
+
+        .retro-panel {
+            background-color: var(--bg-light);
+            border: 4px solid var(--neon-purple);
+            box-shadow: 0 0 15px var(--neon-purple), inset 0 0 10px var(--neon-purple);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .retro-btn {
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border: 3px solid;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            color: #ffffff;
+            background-color: transparent;
+        }
+
+        .retro-btn-pink {
+            border-color: var(--neon-hotpink);
+            color: var(--neon-hotpink);
+            box-shadow: 0 0 8px var(--neon-hotpink);
+        }
+        .retro-btn-pink:hover {
+            background-color: var(--neon-hotpink);
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px var(--neon-hotpink);
+        }
+
+        .retro-btn-purple {
+            border-color: var(--neon-purple);
+            color: var(--neon-purple);
+            box-shadow: 0 0 8px var(--neon-purple);
+        }
+        .retro-btn-purple:hover {
+            background-color: var(--neon-purple);
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px var(--neon-purple);
+        }
+
+        .retro-input {
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            background-color: var(--bg-dark);
+            border: 2px solid var(--neon-purple);
+            color: var(--neon-purple);
+            padding: 0.5rem;
+            border-radius: 4px;
+            box-shadow: 0 0 8px var(--neon-purple);
+            outline: none;
+        }
+
+        .code-editor {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            background-color: #0a0a23;
+            color: var(--neon-magenta);
+            border: 2px solid var(--neon-magenta);
+            border-radius: 8px;
+            padding: 1rem;
+            width: 100%;
+            height: 400px;
+            resize: vertical;
+            outline: none;
+            box-shadow: 0 0 10px var(--neon-magenta);
+            line-height: 1.4;
+        }
+
+        .output-panel {
+            background-color: #000;
+            border: 2px solid var(--neon-purple);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #00ff00;
+            height: 200px;
+            overflow-y: auto;
+        }
+
+        .diff-easy { color: var(--neon-magenta); border: 2px solid var(--neon-magenta); background: rgba(218, 112, 214, 0.1); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; }
+        .diff-medium { color: var(--neon-hotpink); border: 2px solid var(--neon-hotpink); background: rgba(255, 105, 180, 0.1); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; }
+        .diff-hard { color: var(--neon-pink); border: 2px solid var(--neon-pink); background: rgba(255, 20, 147, 0.1); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; }
+
+        .status-complete { color: #00ff00; }
+        .status-progress { color: #ffff00; }
+        .status-not-started { color: #888; }
+
+        .problem-item {
+            border: 2px solid #444;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .problem-item:hover {
+            border-color: var(--neon-purple);
+            background-color: rgba(153, 50, 204, 0.1);
+        }
+        .problem-item.selected {
+            border-color: var(--neon-hotpink);
+            background-color: rgba(255, 105, 180, 0.1);
+        }
+
+        .tab-button {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--neon-purple);
+            background: transparent;
+            color: var(--neon-purple);
+            cursor: pointer;
+            border-radius: 4px 4px 0 0;
+            margin-right: 2px;
+        }
+        .tab-button.active {
+            background: var(--neon-purple);
+            color: var(--bg-dark);
+        }
+
+        .loading { opacity: 0.5; pointer-events: none; }
+        .hidden { display: none; }
+
+        .test-case {
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+        }
+        .test-case.passed { border-color: #00ff00; background: rgba(0, 255, 0, 0.1); }
+        .test-case.failed { border-color: #ff0000; background: rgba(255, 0, 0, 0.1); }
+
+        .quick-access {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 2rem;
+            align-items: center;
+            background: var(--bg-light);
+            border: 2px solid var(--neon-purple);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 15px var(--neon-purple);
+        }
+        
+        .stats-overview {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--neon-pink);
+            text-shadow: 0 0 5px var(--neon-pink);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: #ccc;
+            text-transform: uppercase;
+        }
+        
+        .difficulty-selector {
+            display: flex;
+            gap: 0.5rem;
+            justify-self: center;
+        }
+        
+        .diff-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #444;
+            background: transparent;
+            color: #ccc;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'VT323', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .diff-btn.active { border-color: var(--neon-purple); color: var(--neon-purple); }
+        .diff-btn.easy.active { border-color: #10b981; color: #10b981; }
+        .diff-btn.medium.active { border-color: #f59e0b; color: #f59e0b; }
+        .diff-btn.hard.active { border-color: var(--neon-pink); color: var(--neon-pink); }
+        
+        .search-input {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--neon-purple);
+            background: var(--bg-dark);
+            color: var(--neon-purple);
+            border-radius: 20px;
+            outline: none;
+            font-family: 'VT323', monospace;
+            width: 200px;
+        }
+        
+        .main-layout {
+            background: var(--bg-light);
+            border: 2px solid var(--neon-magenta);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 0 15px var(--neon-magenta);
+        }
+        
+        .problems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .problem-card {
+            background: rgba(46, 26, 71, 0.8);
+            border: 2px solid #444;
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .problem-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 105, 180, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .problem-card:hover::before {
+            left: 100%;
+        }
+        
+        .problem-card:hover {
+            border-color: var(--neon-hotpink);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(255, 105, 180, 0.3);
+        }
+        
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .problem-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        
+        .problem-status {
+            font-size: 1.2rem;
+        }
+        
+        .problem-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tag {
+            background: rgba(153, 50, 204, 0.3);
+            border: 1px solid var(--neon-purple);
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            color: var(--neon-purple);
+        }
+        
+        .problem-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
+        .load-more-container {
+            text-align: center;
+        }
+        
+        .load-more-btn {
+            background: transparent;
+            border: 2px solid var(--neon-purple);
+            color: var(--neon-purple);
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .load-more-btn:hover {
+            background: var(--neon-purple);
+            color: var(--bg-dark);
+            box-shadow: 0 0 20px var(--neon-purple);
+        }
+        
+        .sidebar-container {
+            position: relative;
+        }
+        
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: var(--neon-purple);
+            border: none;
+            border-radius: 50%;
+            width: 3rem;
+            height: 3rem;
+            cursor: pointer;
+        }
+        
+        .hamburger {
+            display: block;
+            width: 1.5rem;
+            height: 2px;
+            background: white;
+            position: relative;
+        }
+        .hamburger::before, .hamburger::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: white;
+            transition: 0.3s;
+        }
+        .hamburger::before { top: -6px; }
+        .hamburger::after { top: 6px; }
+        
+        .sidebar {
+            width: 280px;
+            min-width: 280px;
+            background: var(--bg-light);
+            border: 2px solid var(--neon-purple);
+            border-radius: 8px;
+            padding: 1rem;
+            height: fit-content;
+            position: sticky;
+            top: 1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-close {
+            background: none;
+            border: none;
+            color: var(--neon-purple);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .main-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .problems-section {
+            background: var(--bg-light);
+            border: 2px solid var(--neon-purple);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 0 15px var(--neon-purple);
+        }
+        
+        .problems-list {
+            max-height: 70vh;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        
+        .problem-item {
+            border: 2px solid #444;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: rgba(75, 46, 114, 0.3);
+        }
+        .problem-item:hover {
+            border-color: var(--neon-purple);
+            background: rgba(153, 50, 204, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(153, 50, 204, 0.3);
+        }
+        .problem-item.selected {
+            border-color: var(--neon-hotpink);
+            background: rgba(255, 105, 180, 0.2);
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.4);
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar-toggle { display: block; }
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1000;
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .quick-access {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .stats-overview {
+                justify-content: center;
+            }
+            
+            .difficulty-selector {
+                justify-self: stretch;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+            
+            .diff-btn {
+                flex-shrink: 0;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .problems-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-layout {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="retro-panel">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl text-glow-pink">CODECADE PRACTICE</h1>
+            <div class="flex gap-2">
+                <a href="index.html" class="retro-btn retro-btn-purple text-sm">← HOME</a>
+                <a href="dashboard.html" class="retro-btn retro-btn-pink text-sm">DASHBOARD</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Quick Access Bar -->
+    <div class="quick-access">
+        <div class="stats-overview">
+            <div class="stat-item">
+                <span class="stat-number" id="solvedCount">0</span>
+                <span class="stat-label">Solved</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="streakCount">0</span>
+                <span class="stat-label">Streak</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="accuracyRate">0%</span>
+                <span class="stat-label">Accuracy</span>
+            </div>
+        </div>
+        
+        <div class="difficulty-selector">
+            <button class="diff-btn active" data-filter="all">All <span id="count-all">0</span></button>
+            <button class="diff-btn easy" data-filter="easy">Easy <span id="count-easy">0</span></button>
+            <button class="diff-btn medium" data-filter="intermediate">Medium <span id="count-medium">0</span></button>
+            <button class="diff-btn hard" data-filter="expert">Hard <span id="count-hard">0</span></button>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search problems..." class="search-input">
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Problems Grid -->
+        <div class="problems-grid" id="problemsGrid">
+            <!-- Problems will be loaded here -->
+        </div>
+        
+        <!-- Load More -->
+        <div class="load-more-container">
+            <button id="loadMoreBtn" class="load-more-btn">Load More Problems</button>
+        </div>
+    </div>
+
+        <!-- Problem View (Hidden initially) -->
+        <div id="problemView" class="hidden mt-6">
+            <div class="flex flex-col xl:flex-row gap-6">
+                <!-- Problem Statement -->
+                <div class="w-full xl:w-1/2">
+                    <div class="retro-panel">
+                        <div id="problemStatement">
+                            <!-- Problem details will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code Editor -->
+                <div class="w-full xl:w-1/2">
+                    <div class="retro-panel">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-lg text-glow-purple font-bold">CODE EDITOR</h3>
+                            <div class="flex gap-2">
+                                <select id="languageSelect" class="retro-input text-sm" aria-label="Select programming language">
+                                    <option value="cpp">C++</option>
+                                    <option value="java">Java</option>
+                                    <option value="python">Python</option>
+                                    <option value="javascript">JavaScript</option>
+                                </select>
+                                <button id="resetBtn" class="retro-btn retro-btn-purple text-sm" aria-label="Reset code to template">RESET</button>
+                                <button id="downloadBtn" class="retro-btn retro-btn-purple text-sm" aria-label="Download code file">DOWNLOAD</button>
+                            </div>
+                        </div>
+                        <textarea id="codeEditor" class="code-editor" placeholder="// Write your code here..." aria-label="Code editor"></textarea>
+                        <div class="flex justify-between items-center mt-3">
+                            <div class="flex gap-2">
+                                <button id="runBtn" class="retro-btn retro-btn-purple" aria-label="Run code against public test cases">▶️ RUN</button>
+                                <button id="submitBtn" class="retro-btn retro-btn-pink" aria-label="Submit code for full evaluation">🚀 SUBMIT</button>
+                            </div>
+                            <div class="text-sm text-gray-400">
+                                <span id="problemMeta">Time: 2s | Memory: 256MB</span>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-xs text-gray-500">
+                            💡 <strong>RUN:</strong> Test against public cases only • <strong>SUBMIT:</strong> Full evaluation with hidden tests
+                        </div>
+                    </div>
+
+                    <!-- Output Panel -->
+                    <div class="retro-panel">
+                        <div class="flex gap-1 mb-3" role="tablist" aria-label="Output tabs">
+                            <button class="tab-button active" data-tab="output" role="tab" aria-selected="true">Output</button>
+                            <button class="tab-button" data-tab="tests" role="tab" aria-selected="false">Test Cases</button>
+                            <button class="tab-button" data-tab="submissions" role="tab" aria-selected="false">Submissions</button>
+                        </div>
+                        
+                        <div id="outputTab" class="tab-content" role="tabpanel">
+                            <div id="outputPanel" class="output-panel">
+                                <span class="text-gray-500">Run your code to see output...</span>
+                            </div>
+                        </div>
+                        
+                        <div id="testsTab" class="tab-content hidden" role="tabpanel">
+                            <div id="testCases" class="max-h-48 overflow-y-auto">
+                                <!-- Test cases will be shown here -->
+                            </div>
+                        </div>
+                        
+                        <div id="submissionsTab" class="tab-content hidden" role="tabpanel">
+                            <div id="submissionsList" class="max-h-48 overflow-y-auto text-sm">
+                                <!-- Submissions will be shown here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Welcome Message -->
+        <div id="welcomeMessage" class="text-center py-8">
+            <div class="retro-panel max-w-xl mx-auto">
+                <h2 class="text-2xl text-glow-pink mb-4">🎯 Ready to Code?</h2>
+                <p class="text-gray-300 mb-4">Choose a problem above to start your coding journey!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080';
+        const AUTH_TOKEN = localStorage.getItem('codecade_token') || '';
+        
+        // Check if user is logged in
+        if (!AUTH_TOKEN) {
+            window.location.href = 'index.html';
+        }
+        
+        let problems = [];
+        let currentProblem = null;
+        let currentPage = 1;
+        let currentFilter = 'all';
+        let currentTag = '';
+
+        const codeTemplates = {
+            'two-sum': {
+                cpp: `#include <iostream>\n#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        \n    }\n};`,
+                java: `import java.util.*;\n\nclass Solution {\n    public int[] twoSum(int[] nums, int target) {\n        \n    }\n}`,
+                python: `class Solution:\n    def twoSum(self, nums, target):\n        `,
+                javascript: `var twoSum = function(nums, target) {\n    \n};`
+            },
+            'valid-parentheses': {
+                cpp: `#include <iostream>\n#include <stack>\n#include <string>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool isValid(string s) {\n        \n    }\n};`,
+                java: `import java.util.*;\n\nclass Solution {\n    public boolean isValid(String s) {\n        \n    }\n}`,
+                python: `class Solution:\n    def isValid(self, s: str) -> bool:\n        `,
+                javascript: `var isValid = function(s) {\n    \n};`
+            },
+            'merge-two-sorted-lists': {
+                cpp: `#include <iostream>\nusing namespace std;\n\nstruct ListNode {\n    int val;\n    ListNode *next;\n    ListNode() : val(0), next(nullptr) {}\n    ListNode(int x) : val(x), next(nullptr) {}\n    ListNode(int x, ListNode *next) : val(x), next(next) {}\n};\n\nclass Solution {\npublic:\n    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {\n        \n    }\n};`,
+                java: `class ListNode {\n    int val;\n    ListNode next;\n    ListNode() {}\n    ListNode(int val) { this.val = val; }\n    ListNode(int val, ListNode next) { this.val = val; this.next = next; }\n}\n\nclass Solution {\n    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {\n        \n    }\n}`,
+                python: `class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\nclass Solution:\n    def mergeTwoLists(self, list1, list2):\n        `,
+                javascript: `function ListNode(val, next) {\n    this.val = (val===undefined ? 0 : val)\n    this.next = (next===undefined ? null : next)\n}\n\nvar mergeTwoLists = function(list1, list2) {\n    \n};`
+            },
+            'reverse-linked-list': {
+                cpp: `#include <iostream>\nusing namespace std;\n\nstruct ListNode {\n    int val;\n    ListNode *next;\n    ListNode() : val(0), next(nullptr) {}\n    ListNode(int x) : val(x), next(nullptr) {}\n};\n\nclass Solution {\npublic:\n    ListNode* reverseList(ListNode* head) {\n        \n    }\n};`,
+                java: `class ListNode {\n    int val;\n    ListNode next;\n    ListNode() {}\n    ListNode(int val) { this.val = val; }\n}\n\nclass Solution {\n    public ListNode reverseList(ListNode head) {\n        \n    }\n}`,
+                python: `class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\nclass Solution:\n    def reverseList(self, head):\n        `,
+                javascript: `function ListNode(val, next) {\n    this.val = (val===undefined ? 0 : val)\n    this.next = (next===undefined ? null : next)\n}\n\nvar reverseList = function(head) {\n    \n};`
+            },
+            'binary-search': {
+                cpp: `#include <iostream>\n#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    int search(vector<int>& nums, int target) {\n        \n    }\n};`,
+                java: `class Solution {\n    public int search(int[] nums, int target) {\n        \n    }\n}`,
+                python: `class Solution:\n    def search(self, nums, target):\n        `,
+                javascript: `var search = function(nums, target) {\n    \n};`
+            },
+            'climbing-stairs': {
+                cpp: `#include <iostream>\nusing namespace std;\n\nclass Solution {\npublic:\n    int climbStairs(int n) {\n        \n    }\n};`,
+                java: `class Solution {\n    public int climbStairs(int n) {\n        \n    }\n}`,
+                python: `class Solution:\n    def climbStairs(self, n: int) -> int:\n        `,
+                javascript: `var climbStairs = function(n) {\n    \n};`
+            },
+            'maximum-subarray': {
+                cpp: `#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nclass Solution {\npublic:\n    int maxSubArray(vector<int>& nums) {\n        \n    }\n};`,
+                java: `class Solution {\n    public int maxSubArray(int[] nums) {\n        \n    }\n}`,
+                python: `class Solution:\n    def maxSubArray(self, nums):\n        `,
+                javascript: `var maxSubArray = function(nums) {\n    \n};`
+            },
+            'longest-substring-without-repeating-characters': {
+                cpp: `#include <iostream>\n#include <string>\n#include <unordered_set>\nusing namespace std;\n\nclass Solution {\npublic:\n    int lengthOfLongestSubstring(string s) {\n        \n    }\n};`,
+                java: `import java.util.*;\n\nclass Solution {\n    public int lengthOfLongestSubstring(String s) {\n        \n    }\n}`,
+                python: `class Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        `,
+                javascript: `var lengthOfLongestSubstring = function(s) {\n    \n};`
+            },
+            'three-sum': {
+                cpp: `#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<vector<int>> threeSum(vector<int>& nums) {\n        \n    }\n};`,
+                java: `import java.util.*;\n\nclass Solution {\n    public List<List<Integer>> threeSum(int[] nums) {\n        \n    }\n}`,
+                python: `class Solution:\n    def threeSum(self, nums):\n        `,
+                javascript: `var threeSum = function(nums) {\n    \n};`
+            },
+            'group-anagrams': {
+                cpp: `#include <iostream>\n#include <vector>\n#include <string>\n#include <unordered_map>\n#include <algorithm>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<vector<string>> groupAnagrams(vector<string>& strs) {\n        \n    }\n};`,
+                java: `import java.util.*;\n\nclass Solution {\n    public List<List<String>> groupAnagrams(String[] strs) {\n        \n    }\n}`,
+                python: `class Solution:\n    def groupAnagrams(self, strs):\n        `,
+                javascript: `var groupAnagrams = function(strs) {\n    \n};`
+            },
+            'median-of-two-sorted-arrays': {
+                cpp: `#include <iostream>\n#include <vector>\n#include <algorithm>\nusing namespace std;\n\nclass Solution {\npublic:\n    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {\n        \n    }\n};`,
+                java: `class Solution {\n    public double findMedianSortedArrays(int[] nums1, int[] nums2) {\n        \n    }\n}`,
+                python: `class Solution:\n    def findMedianSortedArrays(self, nums1, nums2):\n        `,
+                javascript: `var findMedianSortedArrays = function(nums1, nums2) {\n    \n};`
+            },
+            'n-queens': {
+                cpp: `#include <iostream>\n#include <vector>\n#include <string>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<vector<string>> solveNQueens(int n) {\n        \n    }\n};`,
+                java: `import java.util.*;\n\nclass Solution {\n    public List<List<String>> solveNQueens(int n) {\n        \n    }\n}`,
+                python: `class Solution:\n    def solveNQueens(self, n: int):\n        `,
+                javascript: `var solveNQueens = function(n) {\n    \n};`
+            }
+        };
+
+        async function loadProblems(reset = false) {
+            if (reset) {
+                problems = [];
+                currentPage = 1;
+            }
+
+            try {
+                const params = new URLSearchParams({
+                    page: currentPage,
+                    limit: 20
+                });
+                
+                if (currentFilter !== 'all') params.append('difficulty', currentFilter);
+                if (currentTag) params.append('tag', currentTag);
+
+                const response = await fetch(`${API_BASE}/api/practice/problems?${params}`);
+                const data = await response.json();
+                
+                if (reset) {
+                    problems = data.problems;
+                } else {
+                    problems = [...problems, ...data.problems];
+                }
+                
+                renderProblems();
+                
+                const loadMoreBtn = document.getElementById('loadMoreBtn');
+                loadMoreBtn.style.display = data.hasMore ? 'block' : 'none';
+                
+                currentPage++;
+            } catch (error) {
+                console.error('Failed to load problems:', error);
+                // Fallback to mock data if API fails
+                if (reset) {
+                    problems = [
+                        { id: 'two-sum', title: 'Two Sum', difficulty: 'Easy', status: 'Not Started', avgTime: 15, attempts: 0, tags: ['Array', 'Hash Table'] },
+                        { id: 'valid-parentheses', title: 'Valid Parentheses', difficulty: 'Easy', status: 'Not Started', avgTime: 10, attempts: 0, tags: ['Stack', 'String'] },
+                        { id: 'merge-two-sorted-lists', title: 'Merge Two Sorted Lists', difficulty: 'Easy', status: 'Not Started', avgTime: 12, attempts: 0, tags: ['Linked List', 'Recursion'] },
+                        { id: 'reverse-linked-list', title: 'Reverse Linked List', difficulty: 'Easy', status: 'Not Started', avgTime: 8, attempts: 0, tags: ['Linked List', 'Recursion'] },
+                        { id: 'binary-search', title: 'Binary Search', difficulty: 'Easy', status: 'Not Started', avgTime: 10, attempts: 0, tags: ['Array', 'Binary Search'] },
+                        { id: 'climbing-stairs', title: 'Climbing Stairs', difficulty: 'Easy', status: 'Not Started', avgTime: 15, attempts: 0, tags: ['Dynamic Programming'] },
+                        { id: 'maximum-subarray', title: 'Maximum Subarray', difficulty: 'Medium', status: 'Not Started', avgTime: 20, attempts: 0, tags: ['Array', 'Dynamic Programming'] },
+                        { id: 'longest-substring-without-repeating-characters', title: 'Longest Substring Without Repeating Characters', difficulty: 'Medium', status: 'Not Started', avgTime: 25, attempts: 0, tags: ['Hash Table', 'String', 'Sliding Window'] },
+                        { id: 'three-sum', title: '3Sum', difficulty: 'Medium', status: 'Not Started', avgTime: 30, attempts: 0, tags: ['Array', 'Two Pointers'] },
+                        { id: 'group-anagrams', title: 'Group Anagrams', difficulty: 'Medium', status: 'Not Started', avgTime: 20, attempts: 0, tags: ['Array', 'Hash Table', 'String'] },
+                        { id: 'median-of-two-sorted-arrays', title: 'Median of Two Sorted Arrays', difficulty: 'Hard', status: 'Not Started', avgTime: 45, attempts: 0, tags: ['Array', 'Binary Search'] },
+                        { id: 'n-queens', title: 'N-Queens', difficulty: 'Hard', status: 'Not Started', avgTime: 60, attempts: 0, tags: ['Backtracking'] }
+                    ];
+                    renderProblems();
+                }
+            }
+        }
+
+        function renderProblems() {
+            const container = document.getElementById('problemsGrid');
+            updateDifficultyCounts();
+            updateStats();
+            
+            const filteredProblems = getFilteredProblems();
+            
+            container.innerHTML = filteredProblems.map(problem => {
+                const statusIcon = problem.status === 'Complete' ? '🏆' : 
+                                 problem.status === 'In Progress' ? '⚡' : '💎';
+                const statusClass = problem.status === 'Complete' ? 'status-complete' : 
+                                  problem.status === 'In Progress' ? 'status-progress' : 'status-not-started';
+                
+                return `
+                    <div class="problem-card" onclick="selectProblem('${problem.id}')">
+                        <div class="problem-header">
+                            <div>
+                                <div class="problem-title">${problem.title}</div>
+                                <span class="diff-${problem.difficulty.toLowerCase()}">${problem.difficulty}</span>
+                            </div>
+                            <span class="problem-status ${statusClass}">${statusIcon}</span>
+                        </div>
+                        
+                        <div class="problem-tags">
+                            ${(problem.tags || ['Array', 'Hash Table']).slice(0, 3).map(tag => 
+                                `<span class="tag">${tag}</span>`
+                            ).join('')}
+                        </div>
+                        
+                        <div class="problem-meta">
+                            <span>⏱️ ~${problem.avgTime}min</span>
+                            <span>🎯 ${problem.attempts} attempts</span>
+                            <span>💯 ${Math.floor(Math.random() * 40 + 60)}% success</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function getFilteredProblems() {
+            let filtered = problems;
+            
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(p => {
+                    const diff = p.difficulty.toLowerCase();
+                    return (currentFilter === 'easy' && diff === 'easy') ||
+                           (currentFilter === 'intermediate' && diff === 'medium') ||
+                           (currentFilter === 'expert' && diff === 'hard');
+                });
+            }
+            
+            const searchTerm = document.getElementById('searchInput')?.value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(p => 
+                    p.title.toLowerCase().includes(searchTerm) ||
+                    (p.tags || []).some(tag => tag.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            return filtered;
+        }
+        
+        async function updateStats() {
+            try {
+                const response = await fetch(`${API_BASE}/api/profile/stats`, {
+                    headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` }
+                });
+                const stats = await response.json();
+                
+                document.getElementById('solvedCount').textContent = stats.totalSolved || 0;
+                document.getElementById('streakCount').textContent = 0;
+                document.getElementById('accuracyRate').textContent = Math.floor(stats.successRate || 0) + '%';
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+                document.getElementById('solvedCount').textContent = 0;
+                document.getElementById('streakCount').textContent = 0;
+                document.getElementById('accuracyRate').textContent = '0%';
+            }
+        }
+        
+        function updateDifficultyCounts() {
+            const counts = {
+                all: problems.length,
+                easy: problems.filter(p => p.difficulty.toLowerCase() === 'easy').length,
+                intermediate: problems.filter(p => p.difficulty.toLowerCase() === 'medium').length,
+                expert: problems.filter(p => p.difficulty.toLowerCase() === 'hard').length
+            };
+            
+            document.getElementById('count-all').textContent = counts.all;
+            document.getElementById('count-easy').textContent = counts.easy;
+            document.getElementById('count-medium').textContent = counts.intermediate;
+            document.getElementById('count-hard').textContent = counts.expert;
+        }
+
+        async function selectProblem(problemId) {
+            try {
+                const response = await fetch(`${API_BASE}/api/practice/problems/${problemId}`);
+                currentProblem = await response.json();
+            } catch (error) {
+                console.error('Failed to load problem:', error);
+                // Fallback to mock problem data
+                const mockProblems = {
+                    'two-sum': {
+                        id: 'two-sum',
+                        title: 'Two Sum',
+                        difficulty: 'Easy',
+                        description: 'Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.',
+                        examples: [
+                            { input: 'nums = [2,7,11,15], target = 9', output: '[0,1]', explanation: 'Because nums[0] + nums[1] == 9, we return [0, 1].' },
+                            { input: 'nums = [3,2,4], target = 6', output: '[1,2]' }
+                        ],
+                        constraints: ['2 ≤ nums.length ≤ 10⁴', '-10⁹ ≤ nums[i] ≤ 10⁹', '-10⁹ ≤ target ≤ 10⁹', 'Only one valid answer exists.'],
+                        tags: ['Array', 'Hash Table'],
+                        timeLimitMs: 2000,
+                        memoryLimitKB: 256000
+                    }
+                };
+                currentProblem = mockProblems[problemId] || mockProblems['two-sum'];
+            }
+            
+            // Reset timer for new problem
+            problemStartTime = null;
+            
+            // Update selected state
+            document.querySelectorAll('.problem-card').forEach(item => {
+                item.classList.remove('selected');
+            });
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('selected');
+            }
+            
+            renderProblemStatement();
+            updateCodeTemplate();
+            loadSubmissions();
+            
+            // Hide welcome message and show problem view
+            document.getElementById('welcomeMessage').classList.add('hidden');
+            document.getElementById('problemView').classList.remove('hidden');
+            
+            // Scroll to problem view smoothly
+            document.getElementById('problemView').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+            
+            // Auto-save current problem
+            localStorage.setItem('currentProblem', problemId);
+        }
+
+        function renderProblemStatement() {
+            if (!currentProblem) return;
+            
+            const container = document.getElementById('problemStatement');
+            container.innerHTML = `
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl text-glow-pink font-bold">${currentProblem.title}</h2>
+                    <span class="diff-${currentProblem.difficulty.toLowerCase()} text-lg font-bold">${currentProblem.difficulty}</span>
+                </div>
+                
+                <div class="mb-6">
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        ${(currentProblem.tags || ['Array', 'Hash Table']).map(tag => 
+                            `<span class="bg-purple-900 border border-purple-600 px-3 py-1 rounded-full text-sm text-purple-300">${tag}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+                
+                <div class="text-gray-200 leading-relaxed mb-6 text-lg">
+                    <p>${currentProblem.description || 'Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.'}</p>
+                </div>
+                
+                <div class="mb-6">
+                    <h4 class="text-xl text-glow-magenta mb-4 font-bold">Examples:</h4>
+                    ${(currentProblem.examples || [
+                        { input: 'nums = [2,7,11,15], target = 9', output: '[0,1]', explanation: 'Because nums[0] + nums[1] == 9, we return [0, 1].' },
+                        { input: 'nums = [3,2,4], target = 6', output: '[1,2]' }
+                    ]).map((ex, i) => `
+                        <div class="bg-gray-800 border border-gray-600 p-4 rounded-lg mb-3">
+                            <div class="text-sm text-gray-400 mb-2 font-bold">Example ${i + 1}:</div>
+                            <div class="mb-2"><strong class="text-blue-300">Input:</strong> <code class="bg-gray-900 px-2 py-1 rounded text-green-300">${ex.input}</code></div>
+                            <div class="mb-2"><strong class="text-blue-300">Output:</strong> <code class="bg-gray-900 px-2 py-1 rounded text-yellow-300">${ex.output}</code></div>
+                            ${ex.explanation ? `<div><strong class="text-blue-300">Explanation:</strong> <span class="text-gray-300">${ex.explanation}</span></div>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="mb-6">
+                    <h4 class="text-xl text-glow-magenta mb-4 font-bold">Constraints:</h4>
+                    <ul class="list-disc list-inside text-gray-300 space-y-1">
+                        ${(currentProblem.constraints || [
+                            '2 ≤ nums.length ≤ 10⁴',
+                            '-10⁹ ≤ nums[i] ≤ 10⁹',
+                            '-10⁹ ≤ target ≤ 10⁹',
+                            'Only one valid answer exists.'
+                        ]).map(c => `<li>${c}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="text-sm text-gray-400 border-t border-gray-600 pt-4">
+                    <div class="flex justify-between items-center">
+                        <div class="flex gap-4">
+                            <span>⏱️ Time Limit: ${(currentProblem.timeLimitMs || 2000) / 1000}s</span>
+                            <span>💾 Memory Limit: ${Math.floor((currentProblem.memoryLimitKB || 256000) / 1024)}MB</span>
+                        </div>
+                        <button onclick="document.getElementById('codeEditor').focus()" class="retro-btn retro-btn-purple text-sm">
+                            Start Coding →
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('problemMeta').textContent = 
+                `Time: ${(currentProblem.timeLimitMs || 2000) / 1000}s | Memory: ${Math.floor((currentProblem.memoryLimitKB || 256000) / 1024)}MB`;
+        }
+
+        function updateCodeTemplate() {
+            const language = document.getElementById('languageSelect').value;
+            const editor = document.getElementById('codeEditor');
+            
+            if (!currentProblem) return;
+            
+            // Load saved code or use problem-specific template
+            const savedCode = localStorage.getItem(`code_${currentProblem.id}_${language}`);
+            const template = codeTemplates[currentProblem.id]?.[language] || 
+                           `// ${currentProblem.title}\n\nclass Solution {\n    \n}`;
+            
+            editor.value = savedCode || template;
+            
+            // Auto-save on change
+            editor.oninput = () => {
+                localStorage.setItem(`code_${currentProblem.id}_${language}`, editor.value);
+            };
+        }
+
+        let problemStartTime = null;
+        
+        async function runCode() {
+            if (!currentProblem) return;
+
+            const code = document.getElementById('codeEditor').value;
+            const language = document.getElementById('languageSelect').value;
+            
+            if (!code.trim()) {
+                showOutput('Please write some code first.', 'error');
+                return;
+            }
+            
+            // Start timing if not already started
+            if (!problemStartTime) {
+                problemStartTime = Date.now();
+            }
+
+            // Switch to output tab
+            switchTab('output');
+            showOutput('🔄 Compiling and running code...\n⏱️  Testing against public test cases...', 'info');
+            setLoading(true);
+
+            try {
+                const response = await fetch(`${API_BASE}/api/practice/run`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${AUTH_TOKEN}`
+                    },
+                    body: JSON.stringify({ 
+                        problemId: currentProblem.id, 
+                        language, 
+                        code,
+                        startTime: problemStartTime
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.verdict === 'accepted') {
+                    const passedCount = result.publicResults?.filter(r => r.passed).length || 0;
+                    const totalCount = result.publicResults?.length || 0;
+                    showOutput(`🎉 All public tests passed! (${passedCount}/${totalCount})\n\n📊 Performance:\n• Runtime: ${result.runtime}ms\n• Memory: ${Math.round(result.memory/1024)}KB\n\n💡 Ready to submit for full evaluation!`, 'success');
+                } else if (result.verdict === 'compile_error') {
+                    showOutput(`❌ Compilation Error:\n\n${result.error}\n\n🔧 Please fix the syntax errors and try again.`, 'error');
+                } else {
+                    const passedCount = result.publicResults?.filter(r => r.passed).length || 0;
+                    const totalCount = result.publicResults?.length || 0;
+                    showOutput(`⚠️  Some tests failed (${passedCount}/${totalCount})\n\n📊 Performance:\n• Runtime: ${result.runtime || 0}ms\n• Memory: ${Math.round((result.memory || 0)/1024)}KB\n\n🔍 Check the Test Cases tab for details.`, 'error');
+                }
+                
+                renderTestCases(result.publicResults || []);
+                
+                // Auto-switch to test cases if there are failures
+                if (result.verdict !== 'accepted' && result.publicResults?.some(r => !r.passed)) {
+                    setTimeout(() => switchTab('tests'), 2000);
+                }
+            } catch (error) {
+                showOutput('🚫 Network error. Please check your connection and try again.', 'error');
+                console.error('Run error:', error);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function submitCode() {
+            if (!currentProblem) return;
+
+            const code = document.getElementById('codeEditor').value;
+            const language = document.getElementById('languageSelect').value;
+            
+            if (!code.trim()) {
+                showOutput('Please write some code first.', 'error');
+                return;
+            }
+            
+            // Start timing if not already started
+            if (!problemStartTime) {
+                problemStartTime = Date.now();
+            }
+
+            // Confirm submission
+            if (!confirm('Submit your solution for final evaluation?\n\nThis will run against all test cases including hidden ones.')) {
+                return;
+            }
+
+            switchTab('output');
+            showOutput('🚀 Submitting solution...\n⏱️  Running full test suite...\n🔍 Evaluating against hidden test cases...', 'info');
+            setLoading(true);
+
+            try {
+                const response = await fetch(`${API_BASE}/api/practice/submit`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${AUTH_TOKEN}`
+                    },
+                    body: JSON.stringify({ 
+                        problemId: currentProblem.id, 
+                        language, 
+                        code,
+                        startTime: problemStartTime
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.verdict === 'accepted') {
+                    const totalPassed = (result.publicResults?.filter(r => r.passed).length || 0) + result.hiddenPassed;
+                    const totalTests = (result.publicResults?.length || 0) + result.hiddenTotal;
+                    const timeSpent = Math.floor((result.timeSpent || 0) / 60);
+                    showOutput(`🏆 ACCEPTED! Problem solved successfully!\n\n📊 Test Results:\n• Public Tests: ${result.publicResults?.filter(r => r.passed).length || 0}/${result.publicResults?.length || 0}\n• Hidden Tests: ${result.hiddenPassed}/${result.hiddenTotal}\n• Total: ${totalPassed}/${totalTests}\n\n⚡ Performance:\n• Runtime: ${result.runtime}ms\n• Memory: ${Math.round(result.memory/1024)}KB\n• Time Spent: ${timeSpent}m ${(result.timeSpent || 0) % 60}s\n\n🎯 Status updated to Complete!`, 'success');
+                    problemStartTime = null; // Reset timer
+                } else {
+                    const totalPassed = (result.publicResults?.filter(r => r.passed).length || 0) + result.hiddenPassed;
+                    const totalTests = (result.publicResults?.length || 0) + result.hiddenTotal;
+                    showOutput(`❌ ${result.message}\n\n📊 Test Results:\n• Public Tests: ${result.publicResults?.filter(r => r.passed).length || 0}/${result.publicResults?.length || 0}\n• Hidden Tests: ${result.hiddenPassed}/${result.hiddenTotal}\n• Total: ${totalPassed}/${totalTests}\n\n⚡ Performance:\n• Runtime: ${result.runtime}ms\n• Memory: ${Math.round(result.memory/1024)}KB\n\n💡 Review failed test cases and try again!`, 'error');
+                }
+                
+                renderTestCases(result.publicResults || []);
+                loadSubmissions();
+                loadProblems(true); // Refresh to update status
+                
+                // Auto-switch to submissions tab to show new submission
+                setTimeout(() => switchTab('submissions'), 3000);
+            } catch (error) {
+                showOutput('🚫 Submission failed. Please check your connection and try again.', 'error');
+                console.error('Submit error:', error);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function renderTestCases(testResults) {
+            const container = document.getElementById('testCases');
+            
+            if (!testResults.length) {
+                container.innerHTML = '<div class="text-center text-gray-500 py-8">🔍 No test case results available.<br><span class="text-sm">Run your code to see test results.</span></div>';
+                return;
+            }
+            
+            const passedCount = testResults.filter(t => t.passed).length;
+            const totalCount = testResults.length;
+            
+            container.innerHTML = `
+                <div class="mb-4 p-3 border border-gray-600 rounded">
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">Public Test Cases</span>
+                        <span class="${passedCount === totalCount ? 'text-green-400' : 'text-yellow-400'}">
+                            ${passedCount}/${totalCount} Passed
+                        </span>
+                    </div>
+                </div>
+                ${testResults.map((test, i) => `
+                    <div class="test-case ${test.passed ? 'passed' : 'failed'} mb-3">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-medium flex items-center gap-2">
+                                ${test.passed ? '✅' : '❌'} Test Case ${i + 1}
+                            </span>
+                            <div class="flex items-center gap-3 text-xs">
+                                <span class="text-gray-400">${test.runtime}ms</span>
+                                <span class="text-gray-400">${Math.round(test.memory/1024)}KB</span>
+                                <span class="${test.passed ? 'text-green-400' : 'text-red-400'} font-medium">
+                                    ${test.passed ? 'PASSED' : 'FAILED'}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-xs space-y-1">
+                            <div class="flex"><span class="w-16 text-gray-400">Input:</span><code class="text-blue-300">${test.input}</code></div>
+                            <div class="flex"><span class="w-16 text-gray-400">Expected:</span><code class="text-green-300">${test.expected}</code></div>
+                            <div class="flex"><span class="w-16 text-gray-400">Actual:</span><code class="${test.passed ? 'text-green-300' : 'text-red-300'}">${test.actual}</code></div>
+                            ${!test.passed ? `<div class="text-red-400 text-xs mt-1">💡 Your output doesn't match the expected result</div>` : ''}
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        async function loadSubmissions() {
+            if (!currentProblem) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/practice/submissions?problemId=${currentProblem.id}&limit=10`);
+                const data = await response.json();
+                
+                const container = document.getElementById('submissionsList');
+                
+                if (!data.submissions.length) {
+                    container.innerHTML = '<p class="text-gray-500">No submissions yet.</p>';
+                    return;
+                }
+                
+                container.innerHTML = data.submissions.map((sub, i) => `
+                    <div class="border border-gray-600 rounded p-3 mb-2 hover:border-purple-500 transition-colors">
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="${sub.verdict === 'accepted' ? 'text-green-400' : 'text-red-400'} font-medium">
+                                    ${sub.verdict === 'accepted' ? '✅ ACCEPTED' : '❌ ' + sub.verdict.toUpperCase()}
+                                </span>
+                                ${i === 0 ? '<span class="text-xs bg-blue-600 px-2 py-1 rounded">Latest</span>' : ''}
+                            </div>
+                            <span class="text-gray-400 text-xs">${new Date(sub.createdAt).toLocaleString()}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs text-gray-400">
+                            <div class="flex gap-3">
+                                <span>📝 ${sub.language}</span>
+                                <span>⚡ ${sub.runtime}ms</span>
+                                <span>💾 ${Math.round(sub.memory/1024)}KB</span>
+                            </div>
+                            <span class="${sub.verdict === 'accepted' ? 'text-green-400' : 'text-yellow-400'}">
+                                ${sub.passedPublicCount + sub.passedHiddenCount}/${2 + (sub.totalHiddenCount || 3)} tests
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load submissions:', error);
+            }
+        }
+
+        function showOutput(message, type) {
+            const panel = document.getElementById('outputPanel');
+            const color = type === 'success' ? '#00ff00' : type === 'error' ? '#ff0000' : '#ffff00';
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : '⏳';
+            panel.innerHTML = `<div style="color: ${color}; white-space: pre-line; line-height: 1.6;">${message}</div>`;
+        }
+        
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.remove('hidden');
+        }
+
+        function setLoading(loading) {
+            const runBtn = document.getElementById('runBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const codeEditor = document.getElementById('codeEditor');
+            const languageSelect = document.getElementById('languageSelect');
+            
+            if (loading) {
+                runBtn.classList.add('loading');
+                submitBtn.classList.add('loading');
+                runBtn.innerHTML = '⏳ RUNNING...';
+                submitBtn.innerHTML = '🚀 SUBMITTING...';
+                runBtn.disabled = true;
+                submitBtn.disabled = true;
+                codeEditor.disabled = true;
+                languageSelect.disabled = true;
+            } else {
+                runBtn.classList.remove('loading');
+                submitBtn.classList.remove('loading');
+                runBtn.innerHTML = '▶️ RUN';
+                submitBtn.innerHTML = '🚀 SUBMIT';
+                runBtn.disabled = false;
+                submitBtn.disabled = false;
+                codeEditor.disabled = false;
+                languageSelect.disabled = false;
+            }
+        }
+
+        function resetEditor() {
+            if (currentProblem && confirm('Reset code to template? This will lose your current changes.')) {
+                const language = document.getElementById('languageSelect').value;
+                const template = codeTemplates[currentProblem.id]?.[language] || 
+                               `// ${currentProblem.title}\n\n`;
+                document.getElementById('codeEditor').value = template;
+                localStorage.removeItem(`code_${currentProblem.id}_${language}`);
+                showOutput('Code reset to template.', 'info');
+            }
+        }
+
+        function downloadCode() {
+            const code = document.getElementById('codeEditor').value;
+            const language = document.getElementById('languageSelect').value;
+            const extensions = { cpp: 'cpp', java: 'java', python: 'py', javascript: 'js' };
+            
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentProblem?.id || 'solution'}.${extensions[language] || 'txt'}`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Event listeners
+        document.getElementById('languageSelect').addEventListener('change', updateCodeTemplate);
+        document.getElementById('runBtn').addEventListener('click', runCode);
+        document.getElementById('submitBtn').addEventListener('click', submitCode);
+        document.getElementById('resetBtn').addEventListener('click', resetEditor);
+        document.getElementById('downloadBtn').addEventListener('click', downloadCode);
+        document.getElementById('loadMoreBtn').addEventListener('click', () => loadProblems(false));
+
+        // Difficulty buttons
+        document.querySelectorAll('.diff-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                currentPage = 1;
+                loadProblems(true); // Reset and reload with new filter
+            });
+        });
+        
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', () => {
+            renderProblems();
+        });
+        
+        // Sidebar toggle
+        const sidebarToggle = document.querySelector('.sidebar-toggle');
+        const sidebar = document.getElementById('filterSidebar');
+        const sidebarClose = document.querySelector('.sidebar-close');
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.add('open');
+            });
+        }
+        
+        if (sidebarClose) {
+            sidebarClose.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+            });
+        }
+        
+        // Close sidebar on outside click
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 1024 && 
+                !sidebar.contains(e.target) && 
+                !sidebarToggle.contains(e.target) && 
+                sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Tag filter
+        document.getElementById('tagFilter').addEventListener('input', (e) => {
+            currentTag = e.target.value;
+            clearTimeout(window.tagFilterTimeout);
+            window.tagFilterTimeout = setTimeout(() => loadProblems(true), 500);
+        });
+
+        // Tab switching with accessibility
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-button').forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-selected', 'false');
+                });
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                
+                btn.classList.add('active');
+                btn.setAttribute('aria-selected', 'true');
+                document.getElementById(btn.dataset.tab + 'Tab').classList.remove('hidden');
+            });
+            
+            btn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    btn.click();
+                }
+            });
+        });
+
+        // Initialize
+        loadProblems(true);
+    </script>
+    <script src="/js/audio-system.js"></script>
+    <script>
+        
+        // Restore last problem
+        const lastProblem = localStorage.getItem('currentProblem');
+        if (lastProblem) {
+            setTimeout(() => selectProblem(lastProblem), 1000);
+        }
+    </script>
+</body>
+</html>

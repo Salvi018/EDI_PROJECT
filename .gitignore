@@ -1,0 +1,11 @@
+node_modules/
+backend/cpp/
+logs/
+*.log
+.env
+.DS_Store
+backend/node/node_modules/
+backend/cpp/build/
+backend/cpp/external/
+database/cpp_data/
+docs/

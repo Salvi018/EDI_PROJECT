@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Codecade</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'VT323', monospace;
+            background: #000 url('/assets/images/background.jpg') center center / cover no-repeat fixed !important;
+            color: #e0e0e0;
+            font-size: 1.25rem;
+            line-height: 1.5;
+        }
+
+        :root {
+            --neon-pink: #ff1493;
+            --neon-purple: #9932cc;
+            --neon-magenta: #da70d6;
+            --neon-hotpink: #ff69b4;
+            --bg-dark: #2e1a47;
+            --bg-light: #4b2e72;
+        }
+
+        .text-glow-pink { color: var(--neon-pink); text-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink); }
+        .text-glow-purple { color: var(--neon-purple); text-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple); }
+        .text-glow-magenta { color: var(--neon-magenta); text-shadow: 0 0 5px var(--neon-magenta), 0 0 10px var(--neon-magenta); }
+
+        .retro-panel {
+            background-color: var(--bg-light);
+            border: 4px solid var(--neon-purple);
+            box-shadow: 0 0 15px var(--neon-purple), inset 0 0 10px var(--neon-purple);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .retro-btn {
+            font-family: 'VT323', monospace;
+            font-size: 1.25rem;
+            padding: 0.75rem 1.5rem;
+            border: 4px solid;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            color: #ffffff;
+            background-color: transparent;
+        }
+
+        .retro-btn-pink {
+            border-color: var(--neon-hotpink);
+            color: var(--neon-hotpink);
+            box-shadow: 0 0 10px var(--neon-hotpink);
+        }
+        .retro-btn-pink:hover {
+            background-color: var(--neon-hotpink);
+            color: var(--bg-dark);
+            box-shadow: 0 0 20px var(--neon-hotpink);
+        }
+
+        .retro-input {
+            font-family: 'VT323', monospace;
+            font-size: 1.25rem;
+            background-color: var(--bg-dark);
+            border: 2px solid var(--neon-purple);
+            color: var(--neon-purple);
+            padding: 0.75rem;
+            border-radius: 4px;
+            box-shadow: 0 0 8px var(--neon-purple);
+            outline: none;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, var(--bg-light), var(--bg-dark));
+            border: 3px solid var(--neon-magenta);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 0 15px var(--neon-magenta);
+        }
+
+        .chart-container {
+            background-color: var(--bg-light);
+            border: 3px solid var(--neon-purple);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 0 10px var(--neon-purple);
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-dark) 25%, var(--bg-light) 50%, var(--bg-dark) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .heatmap-cell {
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--neon-purple);
+            border-radius: 2px;
+            margin: 1px;
+        }
+
+        .modal {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid { grid-template-columns: 1fr; }
+            .summary-grid { grid-template-columns: repeat(2, 1fr); }
+            .chart-container { overflow-x: auto; }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="retro-panel">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <h1 class="text-3xl text-glow-pink">CODECADE DASHBOARD</h1>
+                <span class="text-glow-magenta" id="username"></span>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="retro-btn retro-btn-purple text-sm">← MAIN</a>
+                <a href="practice-new.html" class="retro-btn retro-btn-magenta text-sm">PRACTICE</a>
+                <input type="date" id="dateFrom" class="retro-input text-sm" value="2024-01-01">
+                <span class="text-glow-purple">TO</span>
+                <input type="date" id="dateTo" class="retro-input text-sm" value="2024-12-31">
+                <button class="retro-btn retro-btn-pink" onclick="refreshData()">REFRESH</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Summary Cards -->
+    <section class="summary-grid grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+        <div class="summary-card">
+            <div class="text-2xl text-glow-pink" id="totalSolved">--</div>
+            <div class="text-sm">TOTAL SOLVED</div>
+        </div>
+        <div class="summary-card">
+            <div class="text-2xl text-glow-magenta" id="totalAttempted">--</div>
+            <div class="text-sm">TOTAL ATTEMPTED</div>
+        </div>
+        <div class="summary-card">
+            <div class="text-2xl text-glow-purple" id="successRate">--%</div>
+            <div class="text-sm">SUCCESS RATE</div>
+        </div>
+        <div class="summary-card">
+            <div class="text-2xl text-glow-pink" id="avgTime">--m</div>
+            <div class="text-sm">AVG TIME</div>
+        </div>
+        <div class="summary-card">
+            <div class="text-2xl text-glow-magenta" id="currentStreak">--</div>
+            <div class="text-sm">CURRENT STREAK</div>
+        </div>
+    </section>
+
+    <!-- Charts Area -->
+    <section class="charts-grid grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="chart-container">
+            <h3 class="text-xl text-glow-purple mb-4">SOLVED PER WEEK</h3>
+            <canvas id="lineChart" width="400" height="200"></canvas>
+        </div>
+        <div class="chart-container">
+            <h3 class="text-xl text-glow-purple mb-4">TOPIC ANALYSIS</h3>
+            <canvas id="barChart" width="400" height="200"></canvas>
+        </div>
+        <div class="chart-container">
+            <h3 class="text-xl text-glow-purple mb-4">DIFFICULTY DISTRIBUTION</h3>
+            <canvas id="pieChart" width="400" height="200"></canvas>
+        </div>
+        <div class="chart-container">
+            <h3 class="text-xl text-glow-purple mb-4">ACTIVITY HEATMAP</h3>
+            <div id="heatmap" class="flex flex-wrap gap-1"></div>
+        </div>
+    </section>
+
+    <!-- Recommendations & Error Analysis -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="retro-panel">
+            <h3 class="text-xl text-glow-pink mb-4">RECOMMENDATIONS</h3>
+            <div id="recommendations" class="space-y-3">
+                <!-- Recommendations will be populated here -->
+            </div>
+        </div>
+        <div class="retro-panel">
+            <h3 class="text-xl text-glow-pink mb-4">ERROR ANALYSIS</h3>
+            <div id="errorAnalysis" class="space-y-2">
+                <!-- Error analysis will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Submission History -->
+    <section class="retro-panel">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+            <h3 class="text-xl text-glow-pink">SUBMISSION HISTORY</h3>
+            <div class="flex gap-2 mt-2 md:mt-0">
+                <select id="statusFilter" class="retro-input text-sm">
+                    <option value="">All Status</option>
+                    <option value="solved">Solved</option>
+                    <option value="failed">Failed</option>
+                </select>
+                <select id="topicFilter" class="retro-input text-sm">
+                    <option value="">All Topics</option>
+                    <option value="arrays">Arrays</option>
+                    <option value="strings">Strings</option>
+                    <option value="trees">Trees</option>
+                </select>
+                <button class="retro-btn retro-btn-pink text-sm" onclick="exportData()">EXPORT</button>
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b-2 border-neon-purple">
+                        <th class="text-left p-2 text-glow-magenta">DATE</th>
+                        <th class="text-left p-2 text-glow-magenta">PROBLEM</th>
+                        <th class="text-left p-2 text-glow-magenta">TOPIC</th>
+                        <th class="text-left p-2 text-glow-magenta">DIFFICULTY</th>
+                        <th class="text-left p-2 text-glow-magenta">STATUS</th>
+                        <th class="text-left p-2 text-glow-magenta">TIME</th>
+                        <th class="text-left p-2 text-glow-magenta">ATTEMPTS</th>
+                    </tr>
+                </thead>
+                <tbody id="submissionTable">
+                    <!-- Submissions will be populated here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="flex justify-center mt-4">
+            <div id="pagination" class="flex gap-2">
+                <!-- Pagination will be populated here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal for Submission Details -->
+    <div id="submissionModal" class="modal fixed inset-0 z-50 hidden flex items-center justify-center">
+        <div class="retro-panel max-w-2xl w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl text-glow-pink">SUBMISSION DETAILS</h3>
+                <button onclick="closeModal()" class="text-2xl text-glow-purple">&times;</button>
+            </div>
+            <div id="modalContent">
+                <!-- Modal content will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/audio-system.js"></script>
+    <script>
+        // API configuration
+        const API_BASE = 'http://localhost:8080';
+        const AUTH_TOKEN = localStorage.getItem('codecade_token') || '';
+        
+        // Check if user is logged in
+        if (!AUTH_TOKEN) {
+            window.location.href = 'index.html';
+        }
+        
+        let dashboardData = {};
+
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        // Initialize dashboard
+        async function initDashboard() {
+            // Get username from token
+            try {
+                const response = await fetch('http://localhost:8080/user/stats', {
+                    headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` }
+                });
+                const profile = await response.json();
+                document.getElementById('username').textContent = profile.username || 'Player';
+            } catch (error) {
+                console.error('Failed to get username');
+            }
+            
+            showSkeletonLoaders();
+            try {
+                await fetchDashboardData();
+                loadSummaryData();
+                loadCharts();
+                loadRecommendations();
+                loadErrorAnalysis();
+                await loadSubmissions();
+            } catch (error) {
+                showError('Failed to load dashboard data');
+            }
+        }
+
+        function showSkeletonLoaders() {
+            document.querySelectorAll('.summary-card div:first-child').forEach(el => {
+                el.className = 'skeleton h-8 rounded';
+            });
+        }
+
+        async function fetchDashboardData() {
+            try {
+                const response = await fetch(`${API_BASE}/user/progress`, {
+                    headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` }
+                });
+                const data = await response.json();
+                
+                // Transform data to match dashboard format
+                dashboardData = {
+                    summary: {
+                        totalSolved: data.totalSolved || 0,
+                        totalAttempted: data.totalSolved || 0,
+                        successRate: 100,
+                        avgTimePerProblemSec: 600,
+                        currentStreakDays: 0
+                    },
+                    trend: [],
+                    topicStats: [],
+                    difficultyBreakdown: {
+                        easy: { solved: 0 },
+                        medium: { solved: 0 },
+                        hard: { solved: 0 }
+                    },
+                    recommendations: ['Practice more Arrays problems', 'Try Medium difficulty'],
+                    commonErrors: []
+                };
+            } catch (error) {
+                console.error('Failed to fetch data:', error);
+                dashboardData = {
+                    summary: { totalSolved: 0, totalAttempted: 0, successRate: 0, avgTimePerProblemSec: 0, currentStreakDays: 0 },
+                    trend: [],
+                    topicStats: [],
+                    difficultyBreakdown: { easy: { solved: 0 }, medium: { solved: 0 }, hard: { solved: 0 } },
+                    recommendations: [],
+                    commonErrors: []
+                };
+            }
+        }
+
+        function loadSummaryData() {
+            const summary = dashboardData.summary;
+            document.getElementById('totalSolved').textContent = summary.totalSolved;
+            document.getElementById('totalAttempted').textContent = summary.totalAttempted;
+            document.getElementById('successRate').textContent = summary.successRate + '%';
+            document.getElementById('avgTime').textContent = Math.floor(summary.avgTimePerProblemSec / 60) + 'm';
+            document.getElementById('currentStreak').textContent = summary.currentStreakDays;
+        }
+
+        function loadCharts() {
+            // Line Chart
+            const lineCtx = document.getElementById('lineChart').getContext('2d');
+            new Chart(lineCtx, {
+                type: 'line',
+                data: {
+                    labels: dashboardData.trend.map(t => t.date),
+                    datasets: [{
+                        label: 'Solved',
+                        data: dashboardData.trend.map(t => t.solved),
+                        borderColor: '#ff69b4',
+                        backgroundColor: 'rgba(255, 105, 180, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { labels: { color: '#e0e0e0' } } },
+                    scales: {
+                        x: { ticks: { color: '#e0e0e0' } },
+                        y: { ticks: { color: '#e0e0e0' } }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) filterSubmissionsByWeek(elements[0].index);
+                    }
+                }
+            });
+
+            // Bar Chart
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: dashboardData.topicStats.map(t => t.topic),
+                    datasets: [{
+                        label: 'Solved',
+                        data: dashboardData.topicStats.map(t => t.solved),
+                        backgroundColor: '#da70d6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { labels: { color: '#e0e0e0' } } },
+                    scales: {
+                        x: { ticks: { color: '#e0e0e0' } },
+                        y: { ticks: { color: '#e0e0e0' } }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) filterSubmissionsByTopic(sampleData.topicData.labels[elements[0].index]);
+                    }
+                }
+            });
+
+            // Pie Chart
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            const diff = dashboardData.difficultyBreakdown;
+            new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Easy', 'Medium', 'Hard'],
+                    datasets: [{
+                        data: [diff.easy.solved, diff.medium.solved, diff.hard.solved],
+                        backgroundColor: ['#da70d6', '#ff69b4', '#ff1493']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { labels: { color: '#e0e0e0' } } }
+                }
+            });
+
+            // Heatmap
+            generateHeatmap();
+        }
+
+        function generateHeatmap() {
+            const heatmap = document.getElementById('heatmap');
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            
+            days.forEach(day => {
+                const dayLabel = document.createElement('div');
+                dayLabel.textContent = day;
+                dayLabel.className = 'text-xs text-glow-purple w-20';
+                heatmap.appendChild(dayLabel);
+                
+                for (let i = 0; i < 12; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'heatmap-cell';
+                    const intensity = Math.random();
+                    cell.style.backgroundColor = `rgba(255, 105, 180, ${intensity})`;
+                    cell.title = `${day}: ${Math.floor(intensity * 10)} problems`;
+                    heatmap.appendChild(cell);
+                }
+            });
+        }
+
+        function loadRecommendations() {
+            const container = document.getElementById('recommendations');
+            container.innerHTML = dashboardData.recommendations.map(rec => `
+                <div class="flex justify-between items-center p-3 border border-neon-magenta rounded">
+                    <span>${rec}</span>
+                    <button class="retro-btn retro-btn-pink text-sm" onclick="bookmarkRecommendation()">Go Reattempt</button>
+                </div>
+            `).join('');
+        }
+
+        function loadErrorAnalysis() {
+            const container = document.getElementById('errorAnalysis');
+            container.innerHTML = dashboardData.commonErrors.map(error => `
+                <div class="flex justify-between">
+                    <span class="text-glow-magenta">${error.errorType}</span>
+                    <span class="text-glow-pink">${error.count}</span>
+                </div>
+            `).join('');
+        }
+
+        async function loadSubmissions() {
+            try {
+                const response = await fetch(`${API_BASE}/problems/solved`, {
+                    headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` }
+                });
+                const data = await response.json();
+                
+                const tbody = document.getElementById('submissionTable');
+                if (!data.problems || data.problems.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-glow-magenta">No submissions yet. Start solving problems!</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = data.problems.map(sub => `
+                    <tr class="border-b border-gray-600 hover:bg-gray-800 cursor-pointer">
+                        <td class="p-2">${new Date(sub.solved_at).toLocaleDateString()}</td>
+                        <td class="p-2 text-glow-pink">${sub.title || 'Problem #' + sub.problem_id}</td>
+                        <td class="p-2">${sub.topic || 'General'}</td>
+                        <td class="p-2"><span>${sub.difficulty || 'Easy'}</span></td>
+                        <td class="p-2 text-green-400">Solved</td>
+                        <td class="p-2">${Math.floor((sub.time_taken_sec || 0) / 60)}m</td>
+                        <td class="p-2">${sub.attempts || 1}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load submissions:', error);
+                document.getElementById('submissionTable').innerHTML = '<tr><td colspan="7" class="p-4 text-center text-red-400">Failed to load submissions</td></tr>';
+            }
+        }
+
+        function showSubmissionDetails(problem) {
+            document.getElementById('submissionModal').classList.remove('hidden');
+            document.getElementById('modalContent').innerHTML = `
+                <div class="space-y-4">
+                    <h4 class="text-lg text-glow-magenta">${problem}</h4>
+                    <div class="text-sm">
+                        <p><strong>Expected:</strong> [1, 2]</p>
+                        <p><strong>Actual:</strong> [2, 1]</p>
+                        <p><strong>Test Case:</strong> nums = [2,7,11,15], target = 9</p>
+                        <p class="text-red-400"><strong>Error:</strong> Wrong order in output</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function closeModal() {
+            document.getElementById('submissionModal').classList.add('hidden');
+        }
+
+        async function refreshData() {
+            showSkeletonLoaders();
+            await initDashboard();
+        }
+
+        async function exportData() {
+            alert('Export feature coming soon!');
+        }
+
+        async function bookmarkRecommendation() {
+            alert('Bookmark feature coming soon!');
+        }
+
+        function showError(message) {
+            console.error(message);
+            alert(message);
+        }
+
+        function filterSubmissionsByWeek(weekIndex) {
+            console.log('Filtering by week:', weekIndex);
+            // Implementation for filtering
+        }
+
+        function filterSubmissionsByTopic(topic) {
+            console.log('Filtering by topic:', topic);
+            // Implementation for filtering
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initDashboard);
+
+        // Add event listeners for filters
+        document.getElementById('statusFilter').addEventListener('change', loadSubmissions);
+        document.getElementById('topicFilter').addEventListener('change', loadSubmissions);
+    </script>
+</body>
+</html>

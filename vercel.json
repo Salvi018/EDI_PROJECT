@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "backend/node/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/auth/(.*)",
+      "dest": "backend/node/server.js"
+    },
+    {
+      "src": "/user/(.*)",
+      "dest": "backend/node/server.js"
+    },
+    {
+      "src": "/problems/(.*)",
+      "dest": "backend/node/server.js"
+    },
+    {
+      "src": "/lessons/(.*)",
+      "dest": "backend/node/server.js"
+    },
+    {
+      "src": "/battle/(.*)",
+      "dest": "backend/node/server.js"
+    },
+    {
+      "src": "/health",
+      "dest": "backend/node/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "backend/node/server.js"
+    }
+  ]
+}

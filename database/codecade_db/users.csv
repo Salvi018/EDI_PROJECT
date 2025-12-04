@@ -1,0 +1,9 @@
+username,email,password,level,xp,streak_days,college,created_at
+test,test@example.com,password123,1,0,0,,2025-12-03T17:17:44.855Z
+salvi,salvi@vit.edu,mypassword,1,0,0,,2025-12-03T17:17:44.855Z
+pixelwizard,pixel@university.edu,wizard123,1,0,0,,2025-12-03T17:17:44.855Z
+retroc0der,retro@college.edu,coder456,1,0,0,,2025-12-03T17:17:44.855Z
+what,nothing@gmail.com,ok,1,0,0,,2025-12-03T17:17:44.855Z
+testuser_1764445494,testuser_1764445494@test.com,test123,1,0,0,,2025-12-03T17:17:44.855Z
+testuser2,test2@test.com,pass123,1,0,0,,2025-12-03T17:17:44.855Z
+hello,hello@vit.edu,$2b$10$ICQoQGsDJMt4uNowrLkBMua8L6OEoXtMk.jlUG1Y5bbyE1CJY2U.u,1,0,0,,2025-12-03T17:17:44.855Z

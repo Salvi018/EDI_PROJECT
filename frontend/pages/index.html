@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codecade - Master DSA with Gamified Practice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: #000 url('/assets/images/background.jpg') center center / cover no-repeat fixed;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .hero-title, .card-title, .logo-text, .nav-link {
+            font-family: 'VT323', monospace;
+            letter-spacing: 0.05em;
+        }
+
+        /* Text Effects */
+        .text-glow-pink { 
+            color: #ff1493; 
+            text-shadow: 0 0 10px #ff1493, 0 0 20px #ff1493, 0 0 30px #ff1493; 
+        }
+        .text-glow-purple { 
+            color: #c084fc; 
+            text-shadow: 0 0 8px #a855f7, 0 0 15px #a855f7; 
+        }
+        .text-glow-cyan { 
+            color: #67e8f9; 
+            text-shadow: 0 0 8px #06b6d4, 0 0 15px #06b6d4; 
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            background: linear-gradient(135deg, rgba(75, 46, 114, 0.95) 0%, rgba(46, 26, 71, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid #ff69b4;
+            box-shadow: 0 4px 20px rgba(255, 105, 180, 0.4);
+        }
+
+        .logo-text {
+            font-family: 'VT323', monospace;
+            font-size: 1.75rem;
+            color: #ff1493;
+            text-shadow: 0 0 10px #ff1493, 0 0 20px #ff1493;
+            font-weight: bold;
+        }
+
+        .nav-link {
+            font-family: 'VT323', monospace;
+            color: #da70d6;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 1.25rem;
+        }
+
+        .nav-link:hover {
+            color: #ff69b4;
+            background: rgba(255, 105, 180, 0.15);
+            text-shadow: 0 0 10px #ff69b4;
+        }
+
+        .user-badge {
+            background: linear-gradient(135deg, rgba(153, 50, 204, 0.4), rgba(75, 46, 114, 0.4));
+            border: 2px solid #da70d6;
+            border-radius: 50px;
+            padding: 0.5rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .user-badge:hover {
+            border-color: #ff69b4;
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #ff69b4;
+            background: linear-gradient(135deg, #ff1493, #9932cc);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            padding: 4rem 2rem 3rem;
+            text-align: center;
+        }
+
+        .hero-backdrop {
+            background: linear-gradient(180deg, 
+                rgba(0, 0, 0, 0.7) 0%, 
+                rgba(0, 0, 0, 0.5) 50%, 
+                rgba(0, 0, 0, 0.3) 100%);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            display: inline-block;
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            letter-spacing: 0.08em;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        .hero-subtitle {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: #f5f5f5;
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.02em;
+            line-height: 1.5;
+        }
+
+        .text-glow-blue-neon { 
+            color: #60a5fa; 
+            text-shadow: 0 0 10px #3b82f6, 0 0 20px #3b82f6, 0 0 30px #3b82f6; 
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { text-shadow: 0 0 10px #3b82f6, 0 0 20px #3b82f6, 0 0 30px #3b82f6; }
+            50% { text-shadow: 0 0 15px #3b82f6, 0 0 30px #3b82f6, 0 0 45px #3b82f6, 0 0 60px #3b82f6; }
+        }
+
+        /* Cards Grid */
+        .cards-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .card {
+            background: linear-gradient(135deg, 
+                rgba(75, 46, 114, 0.7) 0%, 
+                rgba(46, 26, 71, 0.7) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 105, 180, 0.3);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 
+                        0 0 20px rgba(255, 105, 180, 0.2);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, 
+                transparent, 
+                rgba(255, 105, 180, 0.1), 
+                transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-6px) scale(1.02);
+            border-color: rgba(255, 105, 180, 0.8);
+            box-shadow: 0 0 50px rgba(255, 20, 147, 0.7), 
+                        0 0 80px rgba(153, 50, 204, 0.5),
+                        0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-practice {
+            border: 2px solid rgba(255, 20, 147, 0.5);
+            background: linear-gradient(135deg, 
+                rgba(139, 92, 246, 0.8) 0%, 
+                rgba(75, 46, 114, 0.8) 100%);
+            transform: scale(1.05);
+        }
+
+        .card-practice:hover {
+            transform: translateY(-6px) scale(1.07);
+            border-color: rgba(255, 20, 147, 1);
+            box-shadow: 0 0 60px rgba(255, 20, 147, 0.8), 
+                        0 0 100px rgba(255, 20, 147, 0.6),
+                        0 12px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-icon-badge {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 20, 147, 0.2), rgba(153, 50, 204, 0.2));
+            border: 2px solid rgba(255, 105, 180, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.3),
+                        inset 0 0 20px rgba(255, 105, 180, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover .card-icon-badge {
+            box-shadow: 0 0 40px rgba(255, 105, 180, 0.8),
+                        inset 0 0 30px rgba(255, 105, 180, 0.3);
+            transform: scale(1.15);
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1.15); }
+            50% { transform: scale(1.2); }
+        }
+
+        .card-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+        }
+
+        .card-description {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 300;
+            color: #f5f5f5;
+            line-height: 1.7;
+            letter-spacing: 0.01em;
+        }
+
+        /* Auth Panels */
+        .auth-panel { 
+            background: linear-gradient(135deg, 
+                rgba(75, 46, 114, 0.95) 0%, 
+                rgba(46, 26, 71, 0.95) 100%);
+            border: 4px solid #ff69b4; 
+            box-shadow: 0 0 30px rgba(255, 105, 180, 0.5); 
+            padding: 2.5rem; 
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .retro-input { 
+            font-family: 'VT323', monospace; 
+            font-size: 1.25rem; 
+            background-color: rgba(46, 26, 71, 0.8); 
+            border: 2px solid #9932cc; 
+            color: #c084fc; 
+            padding: 0.75rem; 
+            border-radius: 6px; 
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .retro-input:focus { 
+            border-color: #ff69b4; 
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.5); 
+            color: #ff69b4; 
+            outline: none;
+            background-color: rgba(46, 26, 71, 0.95);
+        }
+
+        .retro-btn { 
+            font-family: 'VT323', monospace; 
+            font-size: 1.25rem; 
+            padding: 0.75rem 1.5rem; 
+            border: 3px solid #da70d6; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            transition: all 0.3s ease; 
+            color: #da70d6; 
+            background-color: transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .retro-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(218, 112, 214, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .retro-btn:hover::before {
+            left: 100%;
+        }
+
+        .retro-btn:hover { 
+            background-color: #da70d6; 
+            color: #1a0a2e; 
+            box-shadow: 0 0 25px #da70d6;
+            transform: translateY(-2px);
+        }
+
+        .logout-btn {
+            background: rgba(255, 20, 147, 0.1);
+            border-color: #ff1493;
+            color: #ff1493;
+        }
+
+        .logout-btn:hover {
+            background-color: #ff1493;
+            color: white;
+            box-shadow: 0 0 25px #ff1493;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .stagger-1 { animation-delay: 0.1s; opacity: 0; }
+        .stagger-2 { animation-delay: 0.2s; opacity: 0; }
+        .stagger-3 { animation-delay: 0.3s; opacity: 0; }
+        .stagger-4 { animation-delay: 0.4s; opacity: 0; }
+        .stagger-5 { animation-delay: 0.5s; opacity: 0; }
+        .stagger-6 { animation-delay: 0.6s; opacity: 0; }
+
+        /* Background Animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                rgba(255, 20, 147, 0.03) 0%, 
+                transparent 50%, 
+                rgba(153, 50, 204, 0.03) 100%);
+            animation: bgShift 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { opacity: 0.3; transform: translateX(0); }
+            50% { opacity: 0.5; transform: translateX(20px); }
+        }
+
+        nav, section, .auth-panel { position: relative; z-index: 2; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .hero-subtitle { font-size: 1.25rem; }
+            .hero-backdrop { padding: 2rem 1rem; }
+            .logo-text { font-size: 0.875rem; }
+            .card-practice { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Top Navigation (shown when logged in) -->
+    <nav id="top-nav" class="top-nav hidden sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-8">
+                <div class="logo-text">CODECADE</div>
+                <div class="hidden md:flex gap-1">
+                    <a href="index.html" class="nav-link text-xl">Home</a>
+                    <a href="#about" class="nav-link text-xl">About</a>
+                    <a href="#roadmap" class="nav-link text-xl">Roadmap</a>
+                    <a href="#help" class="nav-link text-xl">Help</a>
+                </div>
+            </div>
+            <div class="user-badge">
+                <div class="user-avatar">👤</div>
+                <div class="hidden sm:block">
+                    <div class="text-xl text-glow-purple" id="nav-username">Player</div>
+                    <div class="text-lg" style="color: #da70d6;">Level <span id="nav-level">1</span> • <span id="nav-xp">0</span> XP</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Authentication Container -->
+    <div id="auth-container" class="min-h-screen flex flex-col items-center justify-center p-4">
+        <h1 class="text-7xl font-bold mb-12 text-center text-glow-pink" style="font-family: 'Press Start+2P', cursive;">
+            CODECADE
+        </h1>
+        
+        <!-- Login Page -->
+        <div id="page-login" class="page-auth">
+            <div class="auth-panel max-w-md w-full">
+                <h2 class="text-4xl text-glow-purple mb-8 text-center">Player Login</h2>
+                <form id="login-form">
+                    <div class="mb-6">
+                        <label for="login-user" class="block text-xl mb-2 text-gray-300">> Email</label>
+                        <input type="email" id="login-user" class="retro-input" placeholder="Enter email..." required>
+                    </div>
+                    <div class="mb-8">
+                        <label for="login-pass" class="block text-xl mb-2 text-gray-300">> Password</label>
+                        <input type="password" id="login-pass" class="retro-input" placeholder="Enter password..." required>
+                    </div>
+                    <button type="submit" class="retro-btn w-full text-2xl py-3">
+                        Start Game
+                    </button>
+                    <p id="login-error" class="text-center text-lg mt-4 text-red-400 hidden"></p>
+                    <p class="text-center text-lg mt-6">
+                        New Player? 
+                        <a href="#" class="text-yellow-400 hover:text-pink-400 transition-colors" onclick="showSignup(); return false;">
+                            Sign Up
+                        </a>
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sign Up Page -->
+        <div id="page-signup" class="page-auth hidden">
+            <div class="auth-panel max-w-md w-full">
+                <h2 class="text-4xl text-glow-purple mb-8 text-center">New Player</h2>
+                <form id="signup-form">
+                    <div class="mb-6">
+                        <label for="signup-user" class="block text-xl mb-2 text-gray-300">> Username</label>
+                        <input type="text" id="signup-user" class="retro-input" placeholder="Choose username..." required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="signup-email" class="block text-xl mb-2 text-gray-300">> Email</label>
+                        <input type="email" id="signup-email" class="retro-input" placeholder="Enter email..." required>
+                    </div>
+                    <div class="mb-8">
+                        <label for="signup-pass" class="block text-xl mb-2 text-gray-300">> Password</label>
+                        <input type="password" id="signup-pass" class="retro-input" placeholder="Create password..." required>
+                    </div>
+                    <button type="submit" class="retro-btn w-full text-2xl py-3">
+                        Create Account
+                    </button>
+                    <p id="signup-message" class="text-center text-lg mt-4 text-green-400 hidden"></p>
+                    <p id="signup-error" class="text-center text-lg mt-2 text-red-400 hidden"></p>
+                    <p class="text-center text-lg mt-6">
+                        Have account? 
+                        <a href="#" class="text-yellow-400 hover:text-pink-400 transition-colors" onclick="showLogin(); return false;">
+                            Login
+                        </a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app-container" class="hidden min-h-screen">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="max-w-5xl mx-auto">
+                <div class="hero-backdrop">
+                    <h1 class="hero-title text-glow-blue-neon">
+                        WELCOME TO CODECADE
+                    </h1>
+                    <p class="hero-subtitle">
+                        Master DSA with gamified practice
+                    </p>
+                    <p style="font-family: 'Poppins', sans-serif; font-size: 1rem; font-weight: 300; color: #e0e0e0; margin-top: 0.5rem; line-height: 1.6;">
+                        Level up your coding skills • Compete with friends • Track your progress
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cards Grid -->
+        <section class="cards-container">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <a href="dashboard.html" class="card fade-in-up stagger-1">
+                    <div class="card-icon-badge">📊</div>
+                    <h3 class="card-title text-glow-purple">Dashboard</h3>
+                    <p class="card-description">View your progress and analytics</p>
+                </a>
+                
+                <a href="practice-new.html" class="card card-practice fade-in-up stagger-2">
+                    <div class="card-icon-badge">🎮</div>
+                    <h3 class="card-title text-glow-blue-neon">Practice</h3>
+                    <p class="card-description">Solve DSA problems</p>
+                </a>
+                
+                <a href="headon.html" class="card fade-in-up stagger-3">
+                    <div class="card-icon-badge">⚔️</div>
+                    <h3 class="card-title text-glow-purple">1v1 Battle</h3>
+                    <p class="card-description">Challenge other coders</p>
+                </a>
+                
+                <a href="learn.html" class="card fade-in-up stagger-4">
+                    <div class="card-icon-badge">📚</div>
+                    <h3 class="card-title text-glow-purple">Learn</h3>
+                    <p class="card-description">Study theory and concepts</p>
+                </a>
+                
+                <a href="leaderboard.html" class="card fade-in-up stagger-5">
+                    <div class="card-icon-badge">🏆</div>
+                    <h3 class="card-title text-glow-purple">Leaderboard</h3>
+                    <p class="card-description">See top players</p>
+                </a>
+                
+                <a href="profile.html" class="card fade-in-up stagger-6">
+                    <div class="card-icon-badge">👤</div>
+                    <h3 class="card-title text-glow-purple">Profile</h3>
+                    <p class="card-description">Manage your account</p>
+                </a>
+                
+                <a href="studybot.html" class="card fade-in-up stagger-6">
+                    <div class="card-icon-badge">🤖</div>
+                    <h3 class="card-title text-glow-cyan">StudyBot</h3>
+                    <p class="card-description">AI study planner for exams</p>
+                </a>
+            </div>
+
+            <div class="text-center mt-12">
+                <button id="logout-btn" class="retro-btn logout-btn text-xl px-8" onclick="logout()">
+                    Logout
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script src="/js/audio-system.js"></script>
+    <script>
+        let authToken = localStorage.getItem('codecade_token') || '';
+        let authUsername = localStorage.getItem('codecade_user') || '';
+
+        function showLogin() {
+            document.getElementById('page-login').classList.remove('hidden');
+            document.getElementById('page-signup').classList.add('hidden');
+        }
+
+        function showSignup() {
+            document.getElementById('page-signup').classList.remove('hidden');
+            document.getElementById('page-login').classList.add('hidden');
+        }
+
+        function showApp() {
+            document.getElementById('auth-container').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
+            document.getElementById('top-nav').classList.remove('hidden');
+            
+            // Update nav with user info
+            document.getElementById('nav-username').textContent = authUsername;
+            // Mock level/XP - replace with real data from API
+            document.getElementById('nav-level').textContent = Math.floor(Math.random() * 10) + 1;
+            document.getElementById('nav-xp').textContent = Math.floor(Math.random() * 1000);
+        }
+
+        function showAuth() {
+            document.getElementById('app-container').classList.add('hidden');
+            document.getElementById('auth-container').classList.remove('hidden');
+            document.getElementById('top-nav').classList.add('hidden');
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-user').value.trim();
+            const password = document.getElementById('login-pass').value;
+            
+            try {
+                const response = await fetch('http://localhost:8080/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                
+                if (!response.ok) throw new Error(data.error);
+                
+                authToken = data.token;
+                authUsername = data.user.username;
+                localStorage.setItem('codecade_token', authToken);
+                localStorage.setItem('codecade_user', authUsername);
+                
+                showApp();
+            } catch (error) {
+                document.getElementById('login-error').textContent = error.message;
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('signup-user').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-pass').value;
+            
+            try {
+                const response = await fetch('http://localhost:8080/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+                const data = await response.json();
+                
+                if (!response.ok) throw new Error(data.error);
+                
+                document.getElementById('signup-message').textContent = 'Account created! Please login.';
+                document.getElementById('signup-message').classList.remove('hidden');
+                document.getElementById('signup-error').classList.add('hidden');
+                
+                setTimeout(() => {
+                    showLogin();
+                    document.getElementById('login-user').value = email;
+                }, 2000);
+            } catch (error) {
+                document.getElementById('signup-error').textContent = error.message;
+                document.getElementById('signup-error').classList.remove('hidden');
+                document.getElementById('signup-message').classList.add('hidden');
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('codecade_token');
+            localStorage.removeItem('codecade_user');
+            authToken = '';
+            authUsername = '';
+            showAuth();
+        }
+
+        // Check if already logged in
+        if (authToken) {
+            showApp();
+        } else {
+            showAuth();
+        }
+    </script>
+</body>
+</html>

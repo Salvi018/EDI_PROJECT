@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Head-on [1v1] - Codecade</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs/loader.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: #000 url('/assets/images/background.jpg') center center / cover no-repeat fixed;
+            font-family: 'Poppins', 'Inter', sans-serif;
+            font-weight: 400;
+        }
+
+        .text-glow-pink { 
+            color: #3b82f6; 
+            text-shadow: 0 0 10px #3b82f6, 0 0 20px #2563eb, 0 0 30px rgba(59, 130, 246, 0.5); 
+            font-weight: 700;
+        }
+
+        .text-glow-cyan { 
+            color: #60a5fa; 
+            text-shadow: 0 0 10px #60a5fa, 0 0 20px #93c5fd, 0 0 30px rgba(96, 165, 250, 0.5); 
+            font-weight: 700;
+        }
+
+        .retro-panel { 
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.85), rgba(59, 130, 246, 0.35));
+            border: 2px solid rgba(59, 130, 246, 0.8);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4), inset 0 0 20px rgba(96, 165, 250, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .retro-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.05), transparent);
+            pointer-events: none;
+        }
+
+        .glow-button { 
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.2);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glow-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .glow-button:hover { 
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.8), 0 0 60px rgba(59, 130, 246, 0.4);
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        .glow-button:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 
+            0%, 100% { opacity: 1; } 
+            50% { opacity: 0.6; } 
+        }
+
+        .spinner { 
+            border: 3px solid rgba(255, 255, 255, 0.2); 
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%; 
+            width: 50px; 
+            height: 50px; 
+            animation: spin 1.2s linear infinite;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+        }
+
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+
+        .rank-badge { 
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .editor-container { 
+            height: 400px; 
+            border: 2px solid rgba(59, 130, 246, 0.6);
+            border-radius: 8px;
+            box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.1);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .navbar { 
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid rgba(59, 130, 246, 0.6);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Enhanced stat cards */
+        .stat-item {
+            padding: 1rem;
+            border-radius: 8px;
+            background: rgba(59, 130, 246, 0.08);
+            border-left: 3px solid #3b82f6;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: rgba(59, 130, 246, 0.15);
+            transform: translateX(5px);
+        }
+
+        /* Battle header enhancements */
+        .vs-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .player-card {
+            flex: 1;
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(59, 130, 246, 0.08);
+            border-radius: 8px;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .player-card:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.7);
+            transform: scale(1.05);
+        }
+
+        .vs-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+            font-size: 1.5rem;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.7);
+        }
+
+        /* Enhanced buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            border: none;
+            color: white;
+            font-weight: 700;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Modal enhancements */
+        .modal-content {
+            animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Timer styling */
+        .battle-timer {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            animation: timerPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes timerPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Problem difficulty badges */
+        .difficulty-easy {
+            background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+            box-shadow: 0 0 15px rgba(14, 165, 233, 0.5);
+        }
+
+        .difficulty-medium {
+            background: linear-gradient(135deg, #a855f7, #d946ef);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+        }
+
+        .difficulty-hard {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Smooth transitions */
+        a, button, .retro-panel {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Animation for result icon */
+        .animate-bounce {
+            animation: bounce 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Improved responsive */
+        @media (max-width: 768px) {
+            .vs-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .vs-badge {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .battle-timer {
+                font-size: 2rem;
+            }
+
+            .player-card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white font-inter">
+    <!-- Navigation -->
+    <nav class="navbar fixed top-0 w-full z-50 p-4">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-6">
+                <a href="index.html" class="text-2xl font-bold text-glow-pink font-mono">CODECADE</a>
+                <div class="hidden md:flex space-x-6">
+                    <a href="dashboard.html" class="text-gray-300 hover:text-pink-400 transition-colors font-medium">Dashboard</a>
+                    <a href="practice-new.html" class="text-gray-300 hover:text-pink-400 transition-colors font-medium">Practice</a>
+                    <a href="headon.html" class="text-pink-400 font-semibold border-b-2 border-pink-400 pb-1">1v1 Battle</a>
+                    <a href="leaderboard.html" class="text-gray-300 hover:text-pink-400 transition-colors font-medium">Leaderboard</a>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="themeToggle" class="p-2 rounded-lg bg-purple-600 hover:bg-purple-700 transition-colors font-semibold">
+                    🌙
+                </button>
+                <div id="userInfo" class="text-sm text-gray-300 font-medium"></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="pt-20 min-h-screen bg-purple-900/40">
+        <!-- Main Menu -->
+        <div id="mainMenu" class="max-w-4xl mx-auto p-6">
+            <div class="text-center mb-12">
+                <h1 class="text-7xl font-black text-glow-pink font-mono mb-6 uppercase tracking-wider">
+                    ⚔️ HEAD-ON [1v1] ⚔️
+                </h1>
+                <p class="text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed font-medium">
+                    Challenge players worldwide in real-time coding battles. Solve problems faster than your opponent to climb the ranks and become a coding champion!
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <!-- Player Stats -->
+                <div class="retro-panel rounded-xl p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="text-3xl">🎮</span>
+                        <h3 class="text-3xl font-bold text-glow-cyan font-mono">YOUR STATS</h3>
+                    </div>
+                    <div id="playerStats" class="space-y-3">
+                        <div class="stat-item flex justify-between items-center">
+                            <span class="text-gray-300 font-medium">Rating</span>
+                            <span id="playerRating" class="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">Loading...</span>
+                        </div>
+                        <div class="stat-item flex justify-between items-center">
+                            <span class="text-gray-300 font-medium">Rank</span>
+                            <span id="playerRank" class="rank-badge px-4 py-2 rounded-full text-sm">Loading...</span>
+                        </div>
+                        <div class="stat-item flex justify-between items-center">
+                            <span class="text-gray-300 font-medium">Wins</span>
+                            <span class="text-xl font-bold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">0</span>
+                        </div>
+                        <div class="stat-item flex justify-between items-center">
+                            <span class="text-gray-300 font-medium">Losses</span>
+                            <span class="text-xl font-bold bg-gradient-to-r from-red-400 to-pink-500 bg-clip-text text-transparent">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="retro-panel rounded-xl p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="text-3xl">⚔️</span>
+                        <h3 class="text-3xl font-bold text-glow-cyan font-mono">BATTLE MODE</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <button id="findMatchBtn" class="w-full bg-gradient-to-r from-pink-600 via-purple-600 to-pink-600 hover:from-pink-700 hover:via-purple-700 hover:to-pink-700 px-6 py-5 rounded-lg text-xl font-bold glow-button transition-all btn-primary">
+                            🚀 FIND MATCH
+                        </button>
+                        <div class="text-sm text-gray-300 text-center font-medium">
+                            Matches you with players of similar skill level
+                        </div>
+                        <div class="text-xs text-gray-400 text-center p-3 bg-purple-900/30 rounded">
+                            💡 Tip: The better you play, the tougher your opponents
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matchmaking Modal -->
+        <div id="matchmakingModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden items-center justify-center">
+            <div class="retro-panel rounded-xl p-10 max-w-md w-full mx-4 text-center modal-content">
+                <div class="flex justify-center mb-6">
+                    <div class="spinner"></div>
+                </div>
+                <h3 class="text-3xl font-bold text-glow-pink mb-3 font-mono">SEARCHING</h3>
+                <p id="searchStatus" class="text-gray-300 mb-4 text-lg font-medium">Looking for worthy opponent...</p>
+                <div class="bg-purple-900/40 rounded-lg p-4 mb-6">
+                    <div class="text-4xl font-bold text-glow-cyan font-mono"><span id="searchTimer">0</span>s</div>
+                    <div class="text-sm text-gray-400 mt-2">searching elapsed</div>
+                </div>
+                <button id="cancelSearch" class="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 px-6 py-3 rounded-lg font-bold glow-button text-white transition-all">
+                    ✕ Cancel Search
+                </button>
+            </div>
+        </div>
+
+        <!-- Battle Arena -->
+        <div id="battleArena" class="hidden max-w-7xl mx-auto p-6">
+            <!-- Battle Header -->
+            <div class="retro-panel rounded-xl p-8 mb-8">
+                <div class="vs-container">
+                    <div class="player-card">
+                        <div class="text-4xl mb-3">👤</div>
+                        <div id="playerName" class="font-bold text-2xl text-glow-pink mb-1">You</div>
+                        <div class="flex items-center justify-center gap-2">
+                            <span class="text-xs text-gray-400">Rating:</span>
+                            <div id="playerBattleRating" class="text-xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">1200</div>
+                        </div>
+                    </div>
+                    
+                    <div class="vs-badge">⚔️</div>
+                    
+                    <div class="player-card">
+                        <div class="text-4xl mb-3">🤖</div>
+                        <div id="opponentName" class="font-bold text-2xl text-glow-cyan mb-1">Opponent</div>
+                        <div class="flex items-center justify-center gap-2">
+                            <span class="text-xs text-gray-400">Rating:</span>
+                            <div id="opponentRating" class="text-xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">1200</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-purple-500/30 my-6"></div>
+                
+                <div class="text-center">
+                    <div class="text-sm text-gray-400 mb-2 uppercase tracking-widest">Time Remaining</div>
+                    <div class="battle-timer text-glow-cyan font-mono" id="battleTimer">05:00</div>
+                </div>
+            </div>
+
+            <!-- Problem & Code Editor -->
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Problem Statement -->
+                <div class="retro-panel rounded-xl p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="text-3xl">📝</span>
+                        <h3 class="text-2xl font-bold text-glow-pink font-mono">PROBLEM</h3>
+                    </div>
+                    <div id="problemContent" class="space-y-4">
+                        <h4 id="problemTitle" class="text-2xl font-bold text-white mb-4">Loading...</h4>
+                        <div class="flex items-center space-x-3 mb-4">
+                            <span id="problemDifficulty" class="px-4 py-2 rounded-full text-sm font-bold text-white">Easy</span>
+                        </div>
+                        <div id="problemDescription" class="text-gray-200 text-base leading-relaxed space-y-3 max-h-64 overflow-y-auto pr-3">
+                            Loading problem...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code Editor -->
+                <div class="retro-panel rounded-xl p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl">💻</span>
+                            <h3 class="text-2xl font-bold text-glow-cyan font-mono">CODE</h3>
+                        </div>
+                        <select id="languageSelect" class="bg-purple-700/60 border-2 border-purple-500/60 rounded px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 transition-colors">
+                            <option value="javascript">JavaScript</option>
+                            <option value="python">Python</option>
+                            <option value="cpp">C++</option>
+                            <option value="java">Java</option>
+                        </select>
+                    </div>
+                    <div id="codeEditor" class="editor-container mb-4"></div>
+                    <div class="flex items-center justify-between pt-4 border-t border-purple-500/30">
+                        <div class="text-sm">
+                            <span id="submissionStatus" class="text-gray-300 font-medium">Ready to submit</span>
+                        </div>
+                        <button id="submitBtn" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 px-6 py-3 rounded-lg font-bold glow-button text-white transition-all">
+                            🚀 SUBMIT
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Match Result Modal -->
+        <div id="resultModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden items-center justify-center">
+            <div class="retro-panel rounded-xl p-10 max-w-md w-full mx-4 text-center modal-content">
+                <div id="resultIcon" class="text-7xl mb-6 animate-bounce">🏆</div>
+                <h3 id="resultTitle" class="text-4xl font-bold text-glow-pink mb-3 font-mono uppercase">VICTORY!</h3>
+                <p id="resultMessage" class="text-gray-300 mb-6 text-lg">You solved the problem faster!</p>
+                
+                <div id="ratingChange" class="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/50 rounded-lg p-4 mb-8">
+                    <div class="text-3xl font-bold text-green-400 mb-1">+25 Rating</div>
+                    <div class="text-sm text-gray-400">Your new rating: 1225</div>
+                </div>
+                
+                <div class="flex gap-4">
+                    <button id="playAgainBtn" class="flex-1 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 px-6 py-3 rounded-lg font-bold glow-button text-white transition-all btn-primary">
+                        ⚡ Play Again
+                    </button>
+                    <button id="backToMenuBtn" class="flex-1 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 px-6 py-3 rounded-lg font-bold text-white transition-all">
+                        🏠 Menu
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let socket;
+        let currentMatch = null;
+        let battleTimer = null;
+        let searchTimer = null;
+        let editor = null;
+        let username = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initAuth();
+            initSocket();
+            initEditor();
+            loadPlayerStats();
+            setupEventListeners();
+        });
+
+        // Authentication
+        async function initAuth() {
+            const token = localStorage.getItem('codecade_token');
+            if (!token) {
+                window.location.href = 'auth.html';
+                return;
+            }
+            
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                username = payload.username;
+                document.getElementById('userInfo').textContent = `Welcome, ${username}`;
+            } catch (err) {
+                localStorage.removeItem('codecade_token');
+                window.location.href = 'auth.html';
+            }
+        }
+
+        // Socket.IO initialization
+        function initSocket() {
+            socket = io();
+            
+            socket.on('searching', () => {
+                document.getElementById('searchStatus').textContent = 'Looking for opponent...';
+            });
+            
+            socket.on('matchFound', (data) => {
+                hideMatchmaking();
+                startBattle(data);
+            });
+            
+            socket.on('matchTimeout', () => {
+                hideMatchmaking();
+                alert('No opponent found. Try again!');
+            });
+            
+            socket.on('error', (data) => {
+                hideMatchmaking();
+                alert('Error: ' + data.message);
+            });
+        }
+
+        // Monaco Editor initialization
+        function initEditor() {
+            require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.44.0/min/vs' } });
+            require(['vs/editor/editor.main'], () => {
+                editor = monaco.editor.create(document.getElementById('codeEditor'), {
+                    value: '// Write your solution here\nfunction solution() {\n    \n}',
+                    language: 'javascript',
+                    theme: 'vs-dark',
+                    fontSize: 14,
+                    minimap: { enabled: false },
+                    scrollBeyondLastLine: false
+                });
+            });
+        }
+
+        // Load player stats
+        async function loadPlayerStats() {
+            try {
+                const response = await fetch(`/api/battle/profile/${username}`);
+                const data = await response.json();
+                
+                document.getElementById('playerRating').textContent = data.rating;
+                document.getElementById('playerRank').textContent = data.rank;
+            } catch (err) {
+                console.error('Failed to load stats:', err);
+            }
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            document.getElementById('findMatchBtn').addEventListener('click', findMatch);
+            document.getElementById('cancelSearch').addEventListener('click', cancelSearch);
+            document.getElementById('submitBtn').addEventListener('click', submitSolution);
+            document.getElementById('playAgainBtn').addEventListener('click', () => {
+                hideResult();
+                showMainMenu();
+            });
+            document.getElementById('backToMenuBtn').addEventListener('click', () => {
+                hideResult();
+                showMainMenu();
+            });
+            document.getElementById('languageSelect').addEventListener('change', (e) => {
+                if (editor) {
+                    monaco.editor.setModelLanguage(editor.getModel(), e.target.value);
+                }
+            });
+        }
+
+        // Matchmaking functions
+        function findMatch() {
+            const token = localStorage.getItem('codecade_token');
+            socket.emit('findMatch', { token });
+            showMatchmaking();
+        }
+
+        function cancelSearch() {
+            socket.disconnect();
+            socket.connect();
+            hideMatchmaking();
+        }
+
+        function showMatchmaking() {
+            document.getElementById('matchmakingModal').classList.remove('hidden');
+            document.getElementById('matchmakingModal').classList.add('flex');
+            
+            let seconds = 0;
+            searchTimer = setInterval(() => {
+                seconds++;
+                document.getElementById('searchTimer').textContent = seconds;
+            }, 1000);
+        }
+
+        function hideMatchmaking() {
+            document.getElementById('matchmakingModal').classList.add('hidden');
+            document.getElementById('matchmakingModal').classList.remove('flex');
+            if (searchTimer) {
+                clearInterval(searchTimer);
+                searchTimer = null;
+            }
+        }
+
+        // Battle functions
+        function startBattle(matchData) {
+            currentMatch = matchData;
+            
+            // Update UI
+            document.getElementById('playerName').textContent = username;
+            document.getElementById('opponentName').textContent = matchData.opponent.username;
+            document.getElementById('opponentRating').textContent = matchData.opponent.rating;
+            
+            document.getElementById('problemTitle').textContent = matchData.problem.title;
+            document.getElementById('problemDescription').textContent = matchData.problem.description;
+            
+            const difficultyClasses = {
+                'Easy': 'difficulty-easy',
+                'Medium': 'difficulty-medium', 
+                'Hard': 'difficulty-hard'
+            };
+            const difficultyEl = document.getElementById('problemDifficulty');
+            difficultyEl.textContent = matchData.problem.difficulty;
+            difficultyEl.className = `px-4 py-2 rounded-full text-sm font-bold text-white ${difficultyClasses[matchData.problem.difficulty] || 'bg-gray-600'}`;
+            
+            // Show battle arena
+            document.getElementById('mainMenu').classList.add('hidden');
+            document.getElementById('battleArena').classList.remove('hidden');
+            
+            // Start timer (5 minutes)
+            let timeLeft = 300;
+            battleTimer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('battleTimer').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(battleTimer);
+                    endBattle('timeout');
+                }
+            }, 1000);
+        }
+
+        async function submitSolution() {
+            if (!currentMatch || !editor) return;
+            
+            const code = editor.getValue();
+            const language = document.getElementById('languageSelect').value;
+            
+            document.getElementById('submissionStatus').textContent = 'Submitting...';
+            document.getElementById('submitBtn').disabled = true;
+            
+            try {
+                const response = await fetch('/api/battle/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('codecade_token')}`
+                    },
+                    body: JSON.stringify({
+                        matchId: currentMatch.matchId,
+                        code,
+                        language
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.correct) {
+                    document.getElementById('submissionStatus').textContent = 'Correct! Waiting for opponent...';
+                    checkMatchResult();
+                } else {
+                    document.getElementById('submissionStatus').textContent = 'Incorrect solution. Try again!';
+                    document.getElementById('submitBtn').disabled = false;
+                }
+            } catch (err) {
+                document.getElementById('submissionStatus').textContent = 'Submission failed. Try again!';
+                document.getElementById('submitBtn').disabled = false;
+            }
+        }
+
+        async function checkMatchResult() {
+            try {
+                const response = await fetch(`/api/battle/match/${currentMatch.matchId}`);
+                const match = await response.json();
+                
+                if (match.finished) {
+                    endBattle(match.winner === username ? 'win' : 'lose');
+                } else {
+                    // Check again in 2 seconds
+                    setTimeout(checkMatchResult, 2000);
+                }
+            } catch (err) {
+                console.error('Failed to check match result:', err);
+            }
+        }
+
+        function endBattle(result) {
+            if (battleTimer) {
+                clearInterval(battleTimer);
+                battleTimer = null;
+            }
+            
+            // Hide battle arena
+            document.getElementById('battleArena').classList.add('hidden');
+            
+            // Show result
+            const resultModal = document.getElementById('resultModal');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultMessage = document.getElementById('resultMessage');
+            
+            if (result === 'win') {
+                resultIcon.textContent = '🏆';
+                resultTitle.textContent = 'VICTORY!';
+                resultTitle.className = 'text-3xl font-bold text-green-400 mb-2 font-mono';
+                resultMessage.textContent = 'You solved the problem faster!';
+            } else if (result === 'lose') {
+                resultIcon.textContent = '💀';
+                resultTitle.textContent = 'DEFEAT';
+                resultTitle.className = 'text-3xl font-bold text-red-400 mb-2 font-mono';
+                resultMessage.textContent = 'Your opponent was faster this time.';
+            } else {
+                resultIcon.textContent = '⏰';
+                resultTitle.textContent = 'TIME UP';
+                resultTitle.className = 'text-3xl font-bold text-yellow-400 mb-2 font-mono';
+                resultMessage.textContent = 'The match ended in a timeout.';
+            }
+            
+            resultModal.classList.remove('hidden');
+            resultModal.classList.add('flex');
+            
+            // Reload stats
+            loadPlayerStats();
+        }
+
+        function hideResult() {
+            document.getElementById('resultModal').classList.add('hidden');
+            document.getElementById('resultModal').classList.remove('flex');
+        }
+
+        function showMainMenu() {
+            document.getElementById('mainMenu').classList.remove('hidden');
+            currentMatch = null;
+        }
+    </script>
+</body>
+</html>
