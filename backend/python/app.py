@@ -24,6 +24,7 @@ try:
     from routes.problem_routes import problem_bp
     from routes.lesson_routes import lesson_bp
     from routes.battle_routes import battle_bp
+    from routes.studybot_routes import studybot_bp
     
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(user_bp, url_prefix='/user')
@@ -31,6 +32,7 @@ try:
     app.register_blueprint(problem_bp, url_prefix='/api/practice', name='practice')
     app.register_blueprint(lesson_bp, url_prefix='/lessons')
     app.register_blueprint(battle_bp, url_prefix='/battle')
+    app.register_blueprint(studybot_bp, url_prefix='/studybot')
 except Exception as e:
     print(f'Blueprint registration error: {e}')
 
