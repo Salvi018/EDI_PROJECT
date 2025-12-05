@@ -44,6 +44,18 @@ def health():
 def index():
     return send_from_directory('../../frontend/pages', 'index.html')
 
+@app.route('/pages/<path:filename>')
+def serve_pages(filename):
+    return send_from_directory('../../frontend/pages', filename)
+
+@app.route('/js/<path:filename>')
+def serve_js(filename):
+    return send_from_directory('../../frontend/js', filename)
+
+@app.route('/assets/<path:filename>')
+def serve_assets(filename):
+    return send_from_directory('../../frontend/assets', filename)
+
 @app.route('/<path:filename>')
 def serve_static(filename):
     if filename.endswith('.html'):
