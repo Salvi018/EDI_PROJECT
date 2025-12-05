@@ -9,13 +9,19 @@ app = Flask(__name__, static_folder='../../frontend')
 app.config['SECRET_KEY'] = os.getenv('JWT_SECRET', 'codecade_secret_key')
 CORS(app)
 
-# Connect to MongoDB
+# Connect to MongoDB Atlas
 try:
-    from db.mongodb import connect_db
+    from db.mongodb import connect_db, close_db
     if os.getenv('MONGODB_URI'):
         connect_db()
+    else:
+        print('⚠️  Warning: MONGODB_URI not set. Database features will not work.')
+        print('   Please configure your MongoDB Atlas connection string in .env')
 except Exception as e:
-    print(f'MongoDB connection skipped: {e}')
+    print(f'❌ MongoDB connection failed: {e}')
+    print('   Please ensure your MongoDB Atlas is properly configured.')
+    import sys
+    sys.exit(1)
 
 # Register blueprints
 try:

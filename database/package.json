@@ -1,0 +1,14 @@
+{
+  "name": "codecade-db-init",
+  "version": "1.0.0",
+  "description": "MongoDB Atlas initialization script for CODECADE",
+  "main": "init_mongodb.js",
+  "scripts": {
+    "init": "node init_mongodb.js"
+  },
+  "dependencies": {
+    "mongodb": "^4.6.1",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.3.1"
+  }
+}
