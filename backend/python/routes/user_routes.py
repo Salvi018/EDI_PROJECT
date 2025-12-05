@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from middleware.auth import auth_required
 from models.user_model import find_user_by_id, update_streak, delete_user
+from models.problem_model import get_solved_problems
+from models.lesson_model import get_completed_lessons
 
 user_bp = Blueprint('user', __name__)
 
@@ -25,11 +27,14 @@ def get_user_stats():
 @user_bp.route('/progress', methods=['GET'])
 @auth_required
 def get_user_progress():
+    solved_problems = get_solved_problems(request.user_id)
+    completed_lessons = get_completed_lessons(request.user_id)
+    
     return jsonify({
-        'solvedProblems': [],
-        'completedLessons': [],
-        'totalSolved': 0,
-        'totalLessons': 0
+        'solvedProblems': solved_problems,
+        'completedLessons': completed_lessons,
+        'totalSolved': len(solved_problems),
+        'totalLessons': len(completed_lessons)
     })
 
 @user_bp.route('/profile', methods=['DELETE'])
