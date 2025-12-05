@@ -1,541 +1,660 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Coding Test - Codecade</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <script src="/js/config.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            font-family: 'VT323', monospace;
-            background: #000 url('/assets/images/background.jpg') center center / cover no-repeat fixed;
-            color: #e0e0e0;
-            font-size: 1.25rem;
-        }
-        :root {
-            --neon-pink: #ff1493;
-            --neon-purple: #9932cc;
-            --bg-dark: #2e1a47;
-            --bg-light: #4b2e72;
-        }
-        .panel {
-            background: var(--bg-light);
-            border: 3px solid var(--neon-purple);
-            box-shadow: 0 0 15px var(--neon-purple);
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-        }
-        .btn {
-            font-family: 'VT323', monospace;
-            padding: 0.75rem 1.5rem;
-            border: 3px solid;
-            border-radius: 6px;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: all 0.2s;
-            font-size: 1rem;
-        }
-        .btn-primary {
-            border-color: var(--neon-pink);
-            color: var(--neon-pink);
-            background: transparent;
-        }
-        .btn-primary:hover {
-            background: var(--neon-pink);
-            color: var(--bg-dark);
-        }
-        .btn-secondary {
-            border-color: var(--neon-purple);
-            color: var(--neon-purple);
-            background: transparent;
-        }
-        .btn-secondary:hover {
-            background: var(--neon-purple);
-            color: var(--bg-dark);
-        }
-        .code-editor {
-            font-family: 'Courier New', monospace;
-            background: #0a0a23;
-            color: #da70d6;
-            border: 2px solid var(--neon-purple);
-            border-radius: 8px;
-            padding: 1rem;
-            width: 100%;
-            min-height: 300px;
-            resize: vertical;
-            outline: none;
-        }
-        .question-nav {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        .question-btn {
-            width: 50px;
-            height: 50px;
-            border: 2px solid #666;
-            background: transparent;
-            color: #ccc;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.2rem;
-        }
-        .question-btn.active {
-            border-color: var(--neon-pink);
-            color: var(--neon-pink);
-            background: rgba(255, 20, 147, 0.2);
-        }
-        .question-btn.answered {
-            border-color: #00ff00;
-            color: #00ff00;
-        }
-        .timer {
-            font-size: 2rem;
-            color: var(--neon-pink);
-            text-shadow: 0 0 10px var(--neon-pink);
-        }
-        .result-card {
-            background: rgba(75, 46, 114, 0.5);
-            border: 2px solid;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-        .result-correct {
-            border-color: #00ff00;
-        }
-        .result-incorrect {
-            border-color: #ff0000;
-        }
-        .hidden {
-            display: none;
-        }
+      body {
+        font-family: "VT323", monospace;
+        background: #000 url("/assets/images/background.jpg") center center /
+          cover no-repeat fixed;
+        color: #e0e0e0;
+        font-size: 1.25rem;
+      }
+      :root {
+        --neon-pink: #ff1493;
+        --neon-purple: #9932cc;
+        --bg-dark: #2e1a47;
+        --bg-light: #4b2e72;
+      }
+      .panel {
+        background: var(--bg-light);
+        border: 3px solid var(--neon-purple);
+        box-shadow: 0 0 15px var(--neon-purple);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+      }
+      .btn {
+        font-family: "VT323", monospace;
+        padding: 0.75rem 1.5rem;
+        border: 3px solid;
+        border-radius: 6px;
+        cursor: pointer;
+        text-transform: uppercase;
+        transition: all 0.2s;
+        font-size: 1rem;
+      }
+      .btn-primary {
+        border-color: var(--neon-pink);
+        color: var(--neon-pink);
+        background: transparent;
+      }
+      .btn-primary:hover {
+        background: var(--neon-pink);
+        color: var(--bg-dark);
+      }
+      .btn-secondary {
+        border-color: var(--neon-purple);
+        color: var(--neon-purple);
+        background: transparent;
+      }
+      .btn-secondary:hover {
+        background: var(--neon-purple);
+        color: var(--bg-dark);
+      }
+      .code-editor {
+        font-family: "Courier New", monospace;
+        background: #0a0a23;
+        color: #da70d6;
+        border: 2px solid var(--neon-purple);
+        border-radius: 8px;
+        padding: 1rem;
+        width: 100%;
+        min-height: 300px;
+        resize: vertical;
+        outline: none;
+      }
+      .question-nav {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .question-btn {
+        width: 50px;
+        height: 50px;
+        border: 2px solid #666;
+        background: transparent;
+        color: #ccc;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.2rem;
+      }
+      .question-btn.active {
+        border-color: var(--neon-pink);
+        color: var(--neon-pink);
+        background: rgba(255, 20, 147, 0.2);
+      }
+      .question-btn.answered {
+        border-color: #00ff00;
+        color: #00ff00;
+      }
+      .timer {
+        font-size: 2rem;
+        color: var(--neon-pink);
+        text-shadow: 0 0 10px var(--neon-pink);
+      }
+      .result-card {
+        background: rgba(75, 46, 114, 0.5);
+        border: 2px solid;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+      .result-correct {
+        border-color: #00ff00;
+      }
+      .result-incorrect {
+        border-color: #ff0000;
+      }
+      .hidden {
+        display: none;
+      }
     </style>
-</head>
-<body class="min-h-screen p-4">
+  </head>
+  <body class="min-h-screen p-4">
     <!-- Header -->
     <header class="panel">
-        <div class="flex justify-between items-center">
-            <h1 class="text-3xl" style="color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink);">
-                🎯 CODING & DSA TEST
-            </h1>
-            <div class="timer" id="timer">00:00</div>
-        </div>
+      <div class="flex justify-between items-center">
+        <h1
+          class="text-3xl"
+          style="
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink);
+          "
+        >
+          🎯 CODING & DSA TEST
+        </h1>
+        <div class="timer" id="timer">00:00</div>
+      </div>
     </header>
 
     <!-- Test View -->
     <div id="testView">
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-            <!-- Sidebar -->
-            <div class="lg:col-span-1">
-                <div class="panel">
-                    <h3 class="text-xl mb-4" style="color: var(--neon-purple);">Questions</h3>
-                    <div class="question-nav" id="questionNav"></div>
-                    <div class="mt-6">
-                        <button class="btn btn-primary w-full" onclick="submitTest()">Submit Test</button>
-                    </div>
-                    <div class="mt-4 text-sm text-gray-400">
-                        <p>✅ Answered: <span id="answeredCount">0</span>/5</p>
-                        <p class="mt-2">💡 Unlimited time</p>
-                    </div>
-                </div>
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+          <div class="panel">
+            <h3 class="text-xl mb-4" style="color: var(--neon-purple)">
+              Questions
+            </h3>
+            <div class="question-nav" id="questionNav"></div>
+            <div class="mt-6">
+              <button class="btn btn-primary w-full" onclick="submitTest()">
+                Submit Test
+              </button>
             </div>
-
-            <!-- Main Content -->
-            <div class="lg:col-span-3">
-                <div class="panel">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl" style="color: var(--neon-purple);">
-                            Question <span id="currentQuestionNum">1</span>
-                        </h2>
-                        <div class="flex gap-2">
-                            <button class="btn btn-secondary" onclick="previousQuestion()">← Prev</button>
-                            <button class="btn btn-secondary" onclick="nextQuestion()">Next →</button>
-                        </div>
-                    </div>
-
-                    <!-- Question Details -->
-                    <div id="questionContent">
-                        <h3 class="text-xl mb-3" id="questionTitle"></h3>
-                        <div class="mb-4 text-gray-300" id="questionDescription"></div>
-                        
-                        <div class="mb-4">
-                            <h4 class="text-lg mb-2" style="color: var(--neon-pink);">Example:</h4>
-                            <div class="bg-black p-3 rounded border border-gray-700">
-                                <pre id="questionExample" class="text-sm"></pre>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <h4 class="text-lg mb-2" style="color: var(--neon-pink);">Constraints:</h4>
-                            <div id="questionConstraints" class="text-sm text-gray-400"></div>
-                        </div>
-                    </div>
-
-                    <!-- Code Editor -->
-                    <div class="mt-6">
-                        <div class="flex justify-between items-center mb-3">
-                            <h4 class="text-lg" style="color: var(--neon-purple);">Your Solution:</h4>
-                            <select id="languageSelect" class="bg-gray-800 border-2 border-purple-600 text-purple-400 px-3 py-1 rounded">
-                                <option value="cpp">C++</option>
-                                <option value="java">Java</option>
-                                <option value="python">Python</option>
-                                <option value="javascript">JavaScript</option>
-                            </select>
-                        </div>
-                        <textarea id="codeEditor" class="code-editor" placeholder="// Write your code here..."></textarea>
-                        <div class="mt-3 flex gap-2">
-                            <button class="btn btn-secondary" onclick="saveAnswer()">💾 Save Answer</button>
-                            <button class="btn btn-primary" onclick="testCode()">▶️ Test Code</button>
-                        </div>
-                        <div id="testOutput" class="mt-3 hidden">
-                            <div class="bg-black p-3 rounded border border-gray-700">
-                                <pre id="outputText" class="text-sm text-green-400"></pre>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="mt-4 text-sm text-gray-400">
+              <p>✅ Answered: <span id="answeredCount">0</span>/5</p>
+              <p class="mt-2">💡 Unlimited time</p>
             </div>
+          </div>
         </div>
+
+        <!-- Main Content -->
+        <div class="lg:col-span-3">
+          <div class="panel">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-2xl" style="color: var(--neon-purple)">
+                Question <span id="currentQuestionNum">1</span>
+              </h2>
+              <div class="flex gap-2">
+                <button class="btn btn-secondary" onclick="previousQuestion()">
+                  ← Prev
+                </button>
+                <button class="btn btn-secondary" onclick="nextQuestion()">
+                  Next →
+                </button>
+              </div>
+            </div>
+
+            <!-- Question Details -->
+            <div id="questionContent">
+              <h3 class="text-xl mb-3" id="questionTitle"></h3>
+              <div class="mb-4 text-gray-300" id="questionDescription"></div>
+
+              <div class="mb-4">
+                <h4 class="text-lg mb-2" style="color: var(--neon-pink)">
+                  Example:
+                </h4>
+                <div class="bg-black p-3 rounded border border-gray-700">
+                  <pre id="questionExample" class="text-sm"></pre>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <h4 class="text-lg mb-2" style="color: var(--neon-pink)">
+                  Constraints:
+                </h4>
+                <div
+                  id="questionConstraints"
+                  class="text-sm text-gray-400"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Code Editor -->
+            <div class="mt-6">
+              <div class="flex justify-between items-center mb-3">
+                <h4 class="text-lg" style="color: var(--neon-purple)">
+                  Your Solution:
+                </h4>
+                <select
+                  id="languageSelect"
+                  class="bg-gray-800 border-2 border-purple-600 text-purple-400 px-3 py-1 rounded"
+                >
+                  <option value="cpp">C++</option>
+                  <option value="java">Java</option>
+                  <option value="python">Python</option>
+                  <option value="javascript">JavaScript</option>
+                </select>
+              </div>
+              <textarea
+                id="codeEditor"
+                class="code-editor"
+                placeholder="// Write your code here..."
+              ></textarea>
+              <div class="mt-3 flex gap-2">
+                <button class="btn btn-secondary" onclick="saveAnswer()">
+                  💾 Save Answer
+                </button>
+                <button class="btn btn-primary" onclick="testCode()">
+                  ▶️ Test Code
+                </button>
+              </div>
+              <div id="testOutput" class="mt-3 hidden">
+                <div class="bg-black p-3 rounded border border-gray-700">
+                  <pre id="outputText" class="text-sm text-green-400"></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Results View -->
     <div id="resultsView" class="hidden">
-        <div class="panel max-w-4xl mx-auto">
-            <h2 class="text-3xl text-center mb-6" style="color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink);">
-                🏆 TEST RESULTS
-            </h2>
+      <div class="panel max-w-4xl mx-auto">
+        <h2
+          class="text-3xl text-center mb-6"
+          style="
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink);
+          "
+        >
+          🏆 TEST RESULTS
+        </h2>
 
-            <div class="grid grid-cols-3 gap-4 mb-6 text-center">
-                <div class="panel">
-                    <div class="text-4xl mb-2" style="color: var(--neon-pink);" id="scoreDisplay">0/5</div>
-                    <div class="text-sm text-gray-400">Score</div>
-                </div>
-                <div class="panel">
-                    <div class="text-4xl mb-2" style="color: var(--neon-purple);" id="percentageDisplay">0%</div>
-                    <div class="text-sm text-gray-400">Percentage</div>
-                </div>
-                <div class="panel">
-                    <div class="text-4xl mb-2" style="color: #00ff00;" id="timeDisplay">00:00</div>
-                    <div class="text-sm text-gray-400">Time Taken</div>
-                </div>
+        <div class="grid grid-cols-3 gap-4 mb-6 text-center">
+          <div class="panel">
+            <div
+              class="text-4xl mb-2"
+              style="color: var(--neon-pink)"
+              id="scoreDisplay"
+            >
+              0/5
             </div>
-
-            <h3 class="text-xl mb-4" style="color: var(--neon-purple);">Detailed Results:</h3>
-            <div id="detailedResults"></div>
-
-            <div class="flex gap-4 justify-center mt-6">
-                <button class="btn btn-primary" onclick="retakeTest()">🔄 Retake Test</button>
-                <button class="btn btn-secondary" onclick="window.location.href='practice-new.html'">📚 Back to Practice</button>
+            <div class="text-sm text-gray-400">Score</div>
+          </div>
+          <div class="panel">
+            <div
+              class="text-4xl mb-2"
+              style="color: var(--neon-purple)"
+              id="percentageDisplay"
+            >
+              0%
             </div>
+            <div class="text-sm text-gray-400">Percentage</div>
+          </div>
+          <div class="panel">
+            <div class="text-4xl mb-2" style="color: #00ff00" id="timeDisplay">
+              00:00
+            </div>
+            <div class="text-sm text-gray-400">Time Taken</div>
+          </div>
         </div>
+
+        <h3 class="text-xl mb-4" style="color: var(--neon-purple)">
+          Detailed Results:
+        </h3>
+        <div id="detailedResults"></div>
+
+        <div class="flex gap-4 justify-center mt-6">
+          <button class="btn btn-primary" onclick="retakeTest()">
+            🔄 Retake Test
+          </button>
+          <button
+            class="btn btn-secondary"
+            onclick="window.location.href='practice-new.html'"
+          >
+            📚 Back to Practice
+          </button>
+        </div>
+      </div>
     </div>
 
     <script>
-        const API_BASE = 'http://localhost:8080';
-        const AUTH_TOKEN = localStorage.getItem('codecade_token') || '';
-        
-        if (!AUTH_TOKEN) {
-            window.location.href = 'index.html';
+      const AUTH_TOKEN = localStorage.getItem("codecade_token") || "";
+
+      if (!AUTH_TOKEN) {
+        window.location.href = "index.html";
+      }
+
+      let testQuestions = [];
+      let currentQuestionIndex = 0;
+      let userAnswers = {};
+      let startTime = Date.now();
+      let timerInterval;
+
+      // Start timer
+      function startTimer() {
+        timerInterval = setInterval(() => {
+          const elapsed = Math.floor((Date.now() - startTime) / 1000);
+          const minutes = Math.floor(elapsed / 60);
+          const seconds = elapsed % 60;
+          document.getElementById("timer").textContent = `${String(
+            minutes
+          ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+        }, 1000);
+      }
+
+      // Load test questions
+      async function loadTestQuestions() {
+        try {
+          const response = await fetch(`${API_BASE}/api/test/questions`, {
+            headers: { Authorization: `Bearer ${AUTH_TOKEN}` },
+          });
+          const data = await response.json();
+          testQuestions = data.questions;
+        } catch (error) {
+          console.error("Failed to load questions:", error);
+          // Fallback to mock questions
+          testQuestions = [
+            {
+              id: "two-sum",
+              title: "Two Sum",
+              description:
+                "Given an array of integers nums and an integer target, return indices of the two numbers that add up to target.",
+              example:
+                "Input: nums = [2,7,11,15], target = 9\nOutput: [0,1]\nExplanation: nums[0] + nums[1] = 9",
+              constraints:
+                "• 2 <= nums.length <= 10^4\n• -10^9 <= nums[i] <= 10^9\n• Only one valid answer exists",
+              testCases: [
+                { input: "[2,7,11,15], 9", expected: "[0,1]" },
+                { input: "[3,2,4], 6", expected: "[1,2]" },
+              ],
+            },
+            {
+              id: "valid-parentheses",
+              title: "Valid Parentheses",
+              description:
+                "Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
+              example:
+                'Input: s = "()"\nOutput: true\n\nInput: s = "()[]{}"\nOutput: true',
+              constraints:
+                "• 1 <= s.length <= 10^4\n• s consists of parentheses only",
+              testCases: [
+                { input: '"()"', expected: "true" },
+                { input: '"()[]{}"', expected: "true" },
+              ],
+            },
+            {
+              id: "reverse-linked-list",
+              title: "Reverse Linked List",
+              description:
+                "Given the head of a singly linked list, reverse the list and return the reversed list.",
+              example: "Input: head = [1,2,3,4,5]\nOutput: [5,4,3,2,1]",
+              constraints:
+                "• The number of nodes is in range [0, 5000]\n• -5000 <= Node.val <= 5000",
+              testCases: [
+                { input: "[1,2,3,4,5]", expected: "[5,4,3,2,1]" },
+                { input: "[1,2]", expected: "[2,1]" },
+              ],
+            },
+            {
+              id: "binary-search",
+              title: "Binary Search",
+              description:
+                "Given a sorted array of integers nums and an integer target, write a function to search target in nums. Return the index if found, otherwise return -1.",
+              example:
+                "Input: nums = [-1,0,3,5,9,12], target = 9\nOutput: 4\nExplanation: 9 exists in nums and its index is 4",
+              constraints:
+                "• 1 <= nums.length <= 10^4\n• -10^4 < nums[i], target < 10^4\n• All integers in nums are unique",
+              testCases: [
+                { input: "[-1,0,3,5,9,12], 9", expected: "4" },
+                { input: "[-1,0,3,5,9,12], 2", expected: "-1" },
+              ],
+            },
+            {
+              id: "climbing-stairs",
+              title: "Climbing Stairs",
+              description:
+                "You are climbing a staircase. It takes n steps to reach the top. Each time you can climb 1 or 2 steps. How many distinct ways can you climb to the top?",
+              example:
+                "Input: n = 2\nOutput: 2\nExplanation: Two ways: 1+1 or 2\n\nInput: n = 3\nOutput: 3\nExplanation: Three ways: 1+1+1, 1+2, or 2+1",
+              constraints: "• 1 <= n <= 45",
+              testCases: [
+                { input: "2", expected: "2" },
+                { input: "3", expected: "3" },
+              ],
+            },
+          ];
+        }
+        renderQuestionNav();
+        displayQuestion(0);
+        startTimer();
+      }
+
+      // Render question navigation
+      function renderQuestionNav() {
+        const nav = document.getElementById("questionNav");
+        nav.innerHTML = testQuestions
+          .map(
+            (q, i) =>
+              `<button class="question-btn ${i === 0 ? "active" : ""}" 
+                        id="qBtn${i}" onclick="displayQuestion(${i})">${
+                i + 1
+              }</button>`
+          )
+          .join("");
+      }
+
+      // Display question
+      function displayQuestion(index) {
+        currentQuestionIndex = index;
+        const q = testQuestions[index];
+
+        document.getElementById("currentQuestionNum").textContent = index + 1;
+        document.getElementById("questionTitle").textContent = q.title;
+        document.getElementById("questionDescription").textContent =
+          q.description;
+        document.getElementById("questionExample").textContent = q.example;
+        document.getElementById("questionConstraints").innerHTML = q.constraints
+          .split("\n")
+          .map((c) => `<p>${c}</p>`)
+          .join("");
+
+        // Update navigation
+        document.querySelectorAll(".question-btn").forEach((btn, i) => {
+          btn.classList.toggle("active", i === index);
+        });
+
+        // Load saved answer
+        if (userAnswers[q.id]) {
+          document.getElementById("codeEditor").value = userAnswers[q.id].code;
+          document.getElementById("languageSelect").value =
+            userAnswers[q.id].language;
+        } else {
+          document.getElementById("codeEditor").value = "";
+          document.getElementById("languageSelect").value = "cpp";
         }
 
-        let testQuestions = [];
-        let currentQuestionIndex = 0;
-        let userAnswers = {};
-        let startTime = Date.now();
-        let timerInterval;
+        document.getElementById("testOutput").classList.add("hidden");
+      }
 
-        // Start timer
-        function startTimer() {
-            timerInterval = setInterval(() => {
-                const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                const minutes = Math.floor(elapsed / 60);
-                const seconds = elapsed % 60;
-                document.getElementById('timer').textContent = 
-                    `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            }, 1000);
+      // Save answer
+      function saveAnswer() {
+        const q = testQuestions[currentQuestionIndex];
+        const code = document.getElementById("codeEditor").value.trim();
+        const language = document.getElementById("languageSelect").value;
+
+        if (code) {
+          userAnswers[q.id] = { code, language };
+          document
+            .getElementById(`qBtn${currentQuestionIndex}`)
+            .classList.add("answered");
+          updateAnsweredCount();
+          alert("✅ Answer saved!");
+        } else {
+          alert("⚠️ Please write some code first!");
+        }
+      }
+
+      // Test code
+      function testCode() {
+        const code = document.getElementById("codeEditor").value.trim();
+        if (!code) {
+          alert("⚠️ Please write some code first!");
+          return;
         }
 
-        // Load test questions
-        async function loadTestQuestions() {
-            try {
-                const response = await fetch(`${API_BASE}/api/test/questions`, {
-                    headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` }
-                });
-                const data = await response.json();
-                testQuestions = data.questions;
-            } catch (error) {
-                console.error('Failed to load questions:', error);
-                // Fallback to mock questions
-                testQuestions = [
-                    {
-                        id: 'two-sum',
-                        title: 'Two Sum',
-                        description: 'Given an array of integers nums and an integer target, return indices of the two numbers that add up to target.',
-                        example: 'Input: nums = [2,7,11,15], target = 9\nOutput: [0,1]\nExplanation: nums[0] + nums[1] = 9',
-                        constraints: '• 2 <= nums.length <= 10^4\n• -10^9 <= nums[i] <= 10^9\n• Only one valid answer exists',
-                        testCases: [
-                            { input: '[2,7,11,15], 9', expected: '[0,1]' },
-                            { input: '[3,2,4], 6', expected: '[1,2]' }
-                        ]
-                    },
-                    {
-                        id: 'valid-parentheses',
-                        title: 'Valid Parentheses',
-                        description: 'Given a string containing just the characters \'(\', \')\', \'{\', \'}\', \'[\' and \']\', determine if the input string is valid.',
-                        example: 'Input: s = "()"\nOutput: true\n\nInput: s = "()[]{}"\nOutput: true',
-                        constraints: '• 1 <= s.length <= 10^4\n• s consists of parentheses only',
-                        testCases: [
-                            { input: '"()"', expected: 'true' },
-                            { input: '"()[]{}"', expected: 'true' }
-                        ]
-                    },
-                    {
-                        id: 'reverse-linked-list',
-                        title: 'Reverse Linked List',
-                        description: 'Given the head of a singly linked list, reverse the list and return the reversed list.',
-                        example: 'Input: head = [1,2,3,4,5]\nOutput: [5,4,3,2,1]',
-                        constraints: '• The number of nodes is in range [0, 5000]\n• -5000 <= Node.val <= 5000',
-                        testCases: [
-                            { input: '[1,2,3,4,5]', expected: '[5,4,3,2,1]' },
-                            { input: '[1,2]', expected: '[2,1]' }
-                        ]
-                    },
-                    {
-                        id: 'binary-search',
-                        title: 'Binary Search',
-                        description: 'Given a sorted array of integers nums and an integer target, write a function to search target in nums. Return the index if found, otherwise return -1.',
-                        example: 'Input: nums = [-1,0,3,5,9,12], target = 9\nOutput: 4\nExplanation: 9 exists in nums and its index is 4',
-                        constraints: '• 1 <= nums.length <= 10^4\n• -10^4 < nums[i], target < 10^4\n• All integers in nums are unique',
-                        testCases: [
-                            { input: '[-1,0,3,5,9,12], 9', expected: '4' },
-                            { input: '[-1,0,3,5,9,12], 2', expected: '-1' }
-                        ]
-                    },
-                    {
-                        id: 'climbing-stairs',
-                        title: 'Climbing Stairs',
-                        description: 'You are climbing a staircase. It takes n steps to reach the top. Each time you can climb 1 or 2 steps. How many distinct ways can you climb to the top?',
-                        example: 'Input: n = 2\nOutput: 2\nExplanation: Two ways: 1+1 or 2\n\nInput: n = 3\nOutput: 3\nExplanation: Three ways: 1+1+1, 1+2, or 2+1',
-                        constraints: '• 1 <= n <= 45',
-                        testCases: [
-                            { input: '2', expected: '2' },
-                            { input: '3', expected: '3' }
-                        ]
-                    }
-                ];
+        const output = document.getElementById("testOutput");
+        const outputText = document.getElementById("outputText");
+        output.classList.remove("hidden");
+        outputText.textContent =
+          "🔄 Testing code...\n\n✅ Syntax check passed\n✅ Code is executable\n\n💡 Save your answer and submit when ready!";
+      }
+
+      // Update answered count
+      function updateAnsweredCount() {
+        document.getElementById("answeredCount").textContent =
+          Object.keys(userAnswers).length;
+      }
+
+      // Navigation
+      function previousQuestion() {
+        if (currentQuestionIndex > 0) {
+          displayQuestion(currentQuestionIndex - 1);
+        }
+      }
+
+      function nextQuestion() {
+        if (currentQuestionIndex < testQuestions.length - 1) {
+          displayQuestion(currentQuestionIndex + 1);
+        }
+      }
+
+      // Submit test
+      async function submitTest() {
+        const answeredCount = Object.keys(userAnswers).length;
+        if (answeredCount < 5) {
+          if (
+            !confirm(
+              `You have only answered ${answeredCount}/5 questions. Submit anyway?`
+            )
+          ) {
+            return;
+          }
+        }
+
+        if (!confirm("Submit your test for evaluation?")) {
+          return;
+        }
+
+        clearInterval(timerInterval);
+        const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+
+        // Evaluate answers
+        const results = await evaluateTest();
+        displayResults(results, timeTaken);
+      }
+
+      // Evaluate test
+      async function evaluateTest() {
+        const results = [];
+
+        for (const q of testQuestions) {
+          const answer = userAnswers[q.id];
+          let correct = false;
+          let executable = false;
+          let feedback = "";
+
+          if (answer && answer.code.trim()) {
+            executable = true;
+            // Simple validation - check if code has basic structure
+            const code = answer.code.toLowerCase();
+            if (code.includes("return") || code.includes("print")) {
+              correct = Math.random() > 0.3; // Simulate 70% success rate
             }
-            renderQuestionNav();
-            displayQuestion(0);
-            startTimer();
-        }
 
-        // Render question navigation
-        function renderQuestionNav() {
-            const nav = document.getElementById('questionNav');
-            nav.innerHTML = testQuestions.map((q, i) => 
-                `<button class="question-btn ${i === 0 ? 'active' : ''}" 
-                        id="qBtn${i}" onclick="displayQuestion(${i})">${i + 1}</button>`
-            ).join('');
-        }
-
-        // Display question
-        function displayQuestion(index) {
-            currentQuestionIndex = index;
-            const q = testQuestions[index];
-            
-            document.getElementById('currentQuestionNum').textContent = index + 1;
-            document.getElementById('questionTitle').textContent = q.title;
-            document.getElementById('questionDescription').textContent = q.description;
-            document.getElementById('questionExample').textContent = q.example;
-            document.getElementById('questionConstraints').innerHTML = q.constraints.split('\n').map(c => `<p>${c}</p>`).join('');
-            
-            // Update navigation
-            document.querySelectorAll('.question-btn').forEach((btn, i) => {
-                btn.classList.toggle('active', i === index);
-            });
-            
-            // Load saved answer
-            if (userAnswers[q.id]) {
-                document.getElementById('codeEditor').value = userAnswers[q.id].code;
-                document.getElementById('languageSelect').value = userAnswers[q.id].language;
+            if (correct) {
+              feedback =
+                "✅ Correct! Code executes properly and produces expected output.";
             } else {
-                document.getElementById('codeEditor').value = '';
-                document.getElementById('languageSelect').value = 'cpp';
+              feedback =
+                "❌ Incorrect output or logic error. Review the problem requirements.";
             }
-            
-            document.getElementById('testOutput').classList.add('hidden');
+          } else {
+            feedback = "⚠️ No answer provided.";
+          }
+
+          results.push({
+            question: q.title,
+            correct,
+            executable,
+            feedback,
+          });
         }
 
-        // Save answer
-        function saveAnswer() {
-            const q = testQuestions[currentQuestionIndex];
-            const code = document.getElementById('codeEditor').value.trim();
-            const language = document.getElementById('languageSelect').value;
-            
-            if (code) {
-                userAnswers[q.id] = { code, language };
-                document.getElementById(`qBtn${currentQuestionIndex}`).classList.add('answered');
-                updateAnsweredCount();
-                alert('✅ Answer saved!');
-            } else {
-                alert('⚠️ Please write some code first!');
-            }
-        }
+        return results;
+      }
 
-        // Test code
-        function testCode() {
-            const code = document.getElementById('codeEditor').value.trim();
-            if (!code) {
-                alert('⚠️ Please write some code first!');
-                return;
-            }
-            
-            const output = document.getElementById('testOutput');
-            const outputText = document.getElementById('outputText');
-            output.classList.remove('hidden');
-            outputText.textContent = '🔄 Testing code...\n\n✅ Syntax check passed\n✅ Code is executable\n\n💡 Save your answer and submit when ready!';
-        }
+      // Display results
+      function displayResults(results, timeTaken) {
+        const correctCount = results.filter((r) => r.correct).length;
+        const percentage = Math.round((correctCount / 5) * 100);
 
-        // Update answered count
-        function updateAnsweredCount() {
-            document.getElementById('answeredCount').textContent = Object.keys(userAnswers).length;
-        }
+        const minutes = Math.floor(timeTaken / 60);
+        const seconds = timeTaken % 60;
+        const timeStr = `${String(minutes).padStart(2, "0")}:${String(
+          seconds
+        ).padStart(2, "0")}`;
 
-        // Navigation
-        function previousQuestion() {
-            if (currentQuestionIndex > 0) {
-                displayQuestion(currentQuestionIndex - 1);
-            }
-        }
+        document.getElementById(
+          "scoreDisplay"
+        ).textContent = `${correctCount}/5`;
+        document.getElementById(
+          "percentageDisplay"
+        ).textContent = `${percentage}%`;
+        document.getElementById("timeDisplay").textContent = timeStr;
 
-        function nextQuestion() {
-            if (currentQuestionIndex < testQuestions.length - 1) {
-                displayQuestion(currentQuestionIndex + 1);
-            }
-        }
-
-        // Submit test
-        async function submitTest() {
-            const answeredCount = Object.keys(userAnswers).length;
-            if (answeredCount < 5) {
-                if (!confirm(`You have only answered ${answeredCount}/5 questions. Submit anyway?`)) {
-                    return;
-                }
-            }
-            
-            if (!confirm('Submit your test for evaluation?')) {
-                return;
-            }
-            
-            clearInterval(timerInterval);
-            const timeTaken = Math.floor((Date.now() - startTime) / 1000);
-            
-            // Evaluate answers
-            const results = await evaluateTest();
-            displayResults(results, timeTaken);
-        }
-
-        // Evaluate test
-        async function evaluateTest() {
-            const results = [];
-            
-            for (const q of testQuestions) {
-                const answer = userAnswers[q.id];
-                let correct = false;
-                let executable = false;
-                let feedback = '';
-                
-                if (answer && answer.code.trim()) {
-                    executable = true;
-                    // Simple validation - check if code has basic structure
-                    const code = answer.code.toLowerCase();
-                    if (code.includes('return') || code.includes('print')) {
-                        correct = Math.random() > 0.3; // Simulate 70% success rate
-                    }
-                    
-                    if (correct) {
-                        feedback = '✅ Correct! Code executes properly and produces expected output.';
-                    } else {
-                        feedback = '❌ Incorrect output or logic error. Review the problem requirements.';
-                    }
-                } else {
-                    feedback = '⚠️ No answer provided.';
-                }
-                
-                results.push({
-                    question: q.title,
-                    correct,
-                    executable,
-                    feedback
-                });
-            }
-            
-            return results;
-        }
-
-        // Display results
-        function displayResults(results, timeTaken) {
-            const correctCount = results.filter(r => r.correct).length;
-            const percentage = Math.round((correctCount / 5) * 100);
-            
-            const minutes = Math.floor(timeTaken / 60);
-            const seconds = timeTaken % 60;
-            const timeStr = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            
-            document.getElementById('scoreDisplay').textContent = `${correctCount}/5`;
-            document.getElementById('percentageDisplay').textContent = `${percentage}%`;
-            document.getElementById('timeDisplay').textContent = timeStr;
-            
-            const detailedResults = document.getElementById('detailedResults');
-            detailedResults.innerHTML = results.map((r, i) => `
-                <div class="result-card ${r.correct ? 'result-correct' : 'result-incorrect'}">
+        const detailedResults = document.getElementById("detailedResults");
+        detailedResults.innerHTML = results
+          .map(
+            (r, i) => `
+                <div class="result-card ${
+                  r.correct ? "result-correct" : "result-incorrect"
+                }">
                     <div class="flex justify-between items-center mb-2">
-                        <h4 class="text-lg">Question ${i + 1}: ${r.question}</h4>
-                        <span class="text-2xl">${r.correct ? '✅' : '❌'}</span>
+                        <h4 class="text-lg">Question ${i + 1}: ${
+              r.question
+            }</h4>
+                        <span class="text-2xl">${r.correct ? "✅" : "❌"}</span>
                     </div>
                     <p class="text-sm">${r.feedback}</p>
-                    ${r.executable ? '<p class="text-xs text-gray-400 mt-1">✓ Code is executable</p>' : ''}
+                    ${
+                      r.executable
+                        ? '<p class="text-xs text-gray-400 mt-1">✓ Code is executable</p>'
+                        : ""
+                    }
                 </div>
-            `).join('');
-            
-            document.getElementById('testView').classList.add('hidden');
-            document.getElementById('resultsView').classList.remove('hidden');
-            
-            // Save results to backend
-            saveTestResults(correctCount, percentage, timeTaken);
-        }
+            `
+          )
+          .join("");
 
-        // Save test results
-        async function saveTestResults(score, percentage, timeTaken) {
-            try {
-                await fetch(`${API_BASE}/api/test/submit`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${AUTH_TOKEN}`
-                    },
-                    body: JSON.stringify({ score, percentage, timeTaken })
-                });
-            } catch (error) {
-                console.error('Failed to save results:', error);
-            }
-        }
+        document.getElementById("testView").classList.add("hidden");
+        document.getElementById("resultsView").classList.remove("hidden");
 
-        // Retake test
-        function retakeTest() {
-            userAnswers = {};
-            currentQuestionIndex = 0;
-            startTime = Date.now();
-            document.getElementById('resultsView').classList.add('hidden');
-            document.getElementById('testView').classList.remove('hidden');
-            loadTestQuestions();
-        }
+        // Save results to backend
+        saveTestResults(correctCount, percentage, timeTaken);
+      }
 
-        // Initialize
+      // Save test results
+      async function saveTestResults(score, percentage, timeTaken) {
+        try {
+          await fetch(`${API_BASE}/api/test/submit`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${AUTH_TOKEN}`,
+            },
+            body: JSON.stringify({ score, percentage, timeTaken }),
+          });
+        } catch (error) {
+          console.error("Failed to save results:", error);
+        }
+      }
+
+      // Retake test
+      function retakeTest() {
+        userAnswers = {};
+        currentQuestionIndex = 0;
+        startTime = Date.now();
+        document.getElementById("resultsView").classList.add("hidden");
+        document.getElementById("testView").classList.remove("hidden");
         loadTestQuestions();
+      }
+
+      // Initialize
+      loadTestQuestions();
     </script>
-</body>
+  </body>
 </html>
