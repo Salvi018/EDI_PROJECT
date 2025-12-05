@@ -237,11 +237,28 @@ const API_URL = window.location.hostname === 'localhost'
 
 ## 🐛 Troubleshooting
 
-### Issue 1: Build Failed
+### Issue 1: "Nixpacks unable to generate build plan"
+
+**Problem:** Railway can't find your Node.js app because it's in `backend/node/`
+
+**Fix:** The repo includes `nixpacks.toml` and `railway.json` that tell Railway where to find your app.
+
+**Verify these files exist:**
+- `nixpacks.toml` - Tells Nixpacks to build from `backend/node`
+- `railway.json` - Configures start command
+- `Procfile` - Backup start command
+
+**If still failing:**
+```bash
+git add nixpacks.toml railway.json Procfile
+git commit -m "Add Railway config"
+git push
+```
+
+### Issue 2: Build Failed
 
 **Check:**
-- Root directory is set to `backend/node`
-- `package.json` exists in root directory
+- `package.json` exists in `backend/node/`
 - All dependencies are in `package.json`
 
 **Fix:**
