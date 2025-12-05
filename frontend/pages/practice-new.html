@@ -551,8 +551,8 @@
         </div>
     </div>
 
-        <!-- Problem View (Hidden initially) -->
-        <div id="problemView" class="hidden mt-6">
+        <!-- Removed old problem view - now using dedicated pages -->
+        <div id="problemView" class="hidden mt-6" style="display: none;">
             <div class="flex flex-col xl:flex-row gap-6">
                 <!-- Problem Statement -->
                 <div class="w-full xl:w-1/2">
@@ -760,16 +760,14 @@
                     problems = [
                         { id: 'two-sum', title: 'Two Sum', difficulty: 'Easy', status: 'Not Started', avgTime: 15, attempts: 0, tags: ['Array', 'Hash Table'] },
                         { id: 'valid-parentheses', title: 'Valid Parentheses', difficulty: 'Easy', status: 'Not Started', avgTime: 10, attempts: 0, tags: ['Stack', 'String'] },
-                        { id: 'merge-two-sorted-lists', title: 'Merge Two Sorted Lists', difficulty: 'Easy', status: 'Not Started', avgTime: 12, attempts: 0, tags: ['Linked List', 'Recursion'] },
                         { id: 'reverse-linked-list', title: 'Reverse Linked List', difficulty: 'Easy', status: 'Not Started', avgTime: 8, attempts: 0, tags: ['Linked List', 'Recursion'] },
                         { id: 'binary-search', title: 'Binary Search', difficulty: 'Easy', status: 'Not Started', avgTime: 10, attempts: 0, tags: ['Array', 'Binary Search'] },
                         { id: 'climbing-stairs', title: 'Climbing Stairs', difficulty: 'Easy', status: 'Not Started', avgTime: 15, attempts: 0, tags: ['Dynamic Programming'] },
                         { id: 'maximum-subarray', title: 'Maximum Subarray', difficulty: 'Medium', status: 'Not Started', avgTime: 20, attempts: 0, tags: ['Array', 'Dynamic Programming'] },
-                        { id: 'longest-substring-without-repeating-characters', title: 'Longest Substring Without Repeating Characters', difficulty: 'Medium', status: 'Not Started', avgTime: 25, attempts: 0, tags: ['Hash Table', 'String', 'Sliding Window'] },
-                        { id: 'three-sum', title: '3Sum', difficulty: 'Medium', status: 'Not Started', avgTime: 30, attempts: 0, tags: ['Array', 'Two Pointers'] },
-                        { id: 'group-anagrams', title: 'Group Anagrams', difficulty: 'Medium', status: 'Not Started', avgTime: 20, attempts: 0, tags: ['Array', 'Hash Table', 'String'] },
-                        { id: 'median-of-two-sorted-arrays', title: 'Median of Two Sorted Arrays', difficulty: 'Hard', status: 'Not Started', avgTime: 45, attempts: 0, tags: ['Array', 'Binary Search'] },
-                        { id: 'n-queens', title: 'N-Queens', difficulty: 'Hard', status: 'Not Started', avgTime: 60, attempts: 0, tags: ['Backtracking'] }
+                        { id: 'longest-palindromic-substring', title: 'Longest Palindromic Substring', difficulty: 'Medium', status: 'Not Started', avgTime: 25, attempts: 0, tags: ['String', 'Dynamic Programming'] },
+                        { id: 'container-with-most-water', title: 'Container With Most Water', difficulty: 'Medium', status: 'Not Started', avgTime: 20, attempts: 0, tags: ['Array', 'Two Pointers'] },
+                        { id: 'trapping-rain-water', title: 'Trapping Rain Water', difficulty: 'Hard', status: 'Not Started', avgTime: 40, attempts: 0, tags: ['Array', 'Two Pointers'] },
+                        { id: 'regular-expression-matching', title: 'Regular Expression Matching', difficulty: 'Hard', status: 'Not Started', avgTime: 50, attempts: 0, tags: ['String', 'Dynamic Programming'] }
                     ];
                     renderProblems();
                 }
@@ -790,7 +788,7 @@
                                   problem.status === 'In Progress' ? 'status-progress' : 'status-not-started';
                 
                 return `
-                    <div class="problem-card" onclick="selectProblem('${problem.id}')">
+                    <div class="problem-card" onclick="window.location.href='problem.html?id=${problem.id}'">
                         <div class="problem-header">
                             <div>
                                 <div class="problem-title">${problem.title}</div>
@@ -870,149 +868,14 @@
             document.getElementById('count-hard').textContent = counts.expert;
         }
 
-        async function selectProblem(problemId) {
-            try {
-                const response = await fetch(`${API_BASE}/api/practice/problems/${problemId}`);
-                currentProblem = await response.json();
-            } catch (error) {
-                console.error('Failed to load problem:', error);
-                // Fallback to mock problem data
-                const mockProblems = {
-                    'two-sum': {
-                        id: 'two-sum',
-                        title: 'Two Sum',
-                        difficulty: 'Easy',
-                        description: 'Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.',
-                        examples: [
-                            { input: 'nums = [2,7,11,15], target = 9', output: '[0,1]', explanation: 'Because nums[0] + nums[1] == 9, we return [0, 1].' },
-                            { input: 'nums = [3,2,4], target = 6', output: '[1,2]' }
-                        ],
-                        constraints: ['2 ≤ nums.length ≤ 10⁴', '-10⁹ ≤ nums[i] ≤ 10⁹', '-10⁹ ≤ target ≤ 10⁹', 'Only one valid answer exists.'],
-                        tags: ['Array', 'Hash Table'],
-                        timeLimitMs: 2000,
-                        memoryLimitKB: 256000
-                    }
-                };
-                currentProblem = mockProblems[problemId] || mockProblems['two-sum'];
-            }
-            
-            // Reset timer for new problem
-            problemStartTime = null;
-            
-            // Update selected state
-            document.querySelectorAll('.problem-card').forEach(item => {
-                item.classList.remove('selected');
-            });
-            if (event && event.currentTarget) {
-                event.currentTarget.classList.add('selected');
-            }
-            
-            renderProblemStatement();
-            updateCodeTemplate();
-            loadSubmissions();
-            
-            // Hide welcome message and show problem view
-            document.getElementById('welcomeMessage').classList.add('hidden');
-            document.getElementById('problemView').classList.remove('hidden');
-            
-            // Scroll to problem view smoothly
-            document.getElementById('problemView').scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'start' 
-            });
-            
-            // Auto-save current problem
-            localStorage.setItem('currentProblem', problemId);
-        }
+        // Removed selectProblem - now navigating to dedicated pages
 
-        function renderProblemStatement() {
-            if (!currentProblem) return;
-            
-            const container = document.getElementById('problemStatement');
-            container.innerHTML = `
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl text-glow-pink font-bold">${currentProblem.title}</h2>
-                    <span class="diff-${currentProblem.difficulty.toLowerCase()} text-lg font-bold">${currentProblem.difficulty}</span>
-                </div>
-                
-                <div class="mb-6">
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        ${(currentProblem.tags || ['Array', 'Hash Table']).map(tag => 
-                            `<span class="bg-purple-900 border border-purple-600 px-3 py-1 rounded-full text-sm text-purple-300">${tag}</span>`
-                        ).join('')}
-                    </div>
-                </div>
-                
-                <div class="text-gray-200 leading-relaxed mb-6 text-lg">
-                    <p>${currentProblem.description || 'Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.'}</p>
-                </div>
-                
-                <div class="mb-6">
-                    <h4 class="text-xl text-glow-magenta mb-4 font-bold">Examples:</h4>
-                    ${(currentProblem.examples || [
-                        { input: 'nums = [2,7,11,15], target = 9', output: '[0,1]', explanation: 'Because nums[0] + nums[1] == 9, we return [0, 1].' },
-                        { input: 'nums = [3,2,4], target = 6', output: '[1,2]' }
-                    ]).map((ex, i) => `
-                        <div class="bg-gray-800 border border-gray-600 p-4 rounded-lg mb-3">
-                            <div class="text-sm text-gray-400 mb-2 font-bold">Example ${i + 1}:</div>
-                            <div class="mb-2"><strong class="text-blue-300">Input:</strong> <code class="bg-gray-900 px-2 py-1 rounded text-green-300">${ex.input}</code></div>
-                            <div class="mb-2"><strong class="text-blue-300">Output:</strong> <code class="bg-gray-900 px-2 py-1 rounded text-yellow-300">${ex.output}</code></div>
-                            ${ex.explanation ? `<div><strong class="text-blue-300">Explanation:</strong> <span class="text-gray-300">${ex.explanation}</span></div>` : ''}
-                        </div>
-                    `).join('')}
-                </div>
-                
-                <div class="mb-6">
-                    <h4 class="text-xl text-glow-magenta mb-4 font-bold">Constraints:</h4>
-                    <ul class="list-disc list-inside text-gray-300 space-y-1">
-                        ${(currentProblem.constraints || [
-                            '2 ≤ nums.length ≤ 10⁴',
-                            '-10⁹ ≤ nums[i] ≤ 10⁹',
-                            '-10⁹ ≤ target ≤ 10⁹',
-                            'Only one valid answer exists.'
-                        ]).map(c => `<li>${c}</li>`).join('')}
-                    </ul>
-                </div>
-                
-                <div class="text-sm text-gray-400 border-t border-gray-600 pt-4">
-                    <div class="flex justify-between items-center">
-                        <div class="flex gap-4">
-                            <span>⏱️ Time Limit: ${(currentProblem.timeLimitMs || 2000) / 1000}s</span>
-                            <span>💾 Memory Limit: ${Math.floor((currentProblem.memoryLimitKB || 256000) / 1024)}MB</span>
-                        </div>
-                        <button onclick="document.getElementById('codeEditor').focus()" class="retro-btn retro-btn-purple text-sm">
-                            Start Coding →
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('problemMeta').textContent = 
-                `Time: ${(currentProblem.timeLimitMs || 2000) / 1000}s | Memory: ${Math.floor((currentProblem.memoryLimitKB || 256000) / 1024)}MB`;
-        }
+        // Removed renderProblemStatement - using dedicated pages
 
-        function updateCodeTemplate() {
-            const language = document.getElementById('languageSelect').value;
-            const editor = document.getElementById('codeEditor');
-            
-            if (!currentProblem) return;
-            
-            // Load saved code or use problem-specific template
-            const savedCode = localStorage.getItem(`code_${currentProblem.id}_${language}`);
-            const template = codeTemplates[currentProblem.id]?.[language] || 
-                           `// ${currentProblem.title}\n\nclass Solution {\n    \n}`;
-            
-            editor.value = savedCode || template;
-            
-            // Auto-save on change
-            editor.oninput = () => {
-                localStorage.setItem(`code_${currentProblem.id}_${language}`, editor.value);
-            };
-        }
+        // Removed updateCodeTemplate - using dedicated pages
 
-        let problemStartTime = null;
-        
-        async function runCode() {
+        // Removed runCode - using dedicated pages
+        async function runCode_removed() {
             if (!currentProblem) return;
 
             const code = document.getElementById('codeEditor').value;
@@ -1076,7 +939,8 @@
             }
         }
 
-        async function submitCode() {
+        // Removed submitCode - using dedicated pages
+        async function submitCode_removed() {
             if (!currentProblem) return;
 
             const code = document.getElementById('codeEditor').value;
@@ -1144,7 +1008,8 @@
             }
         }
 
-        function renderTestCases(testResults) {
+        // Removed renderTestCases - using dedicated pages
+        function renderTestCases_removed(testResults) {
             const container = document.getElementById('testCases');
             
             if (!testResults.length) {
@@ -1189,7 +1054,8 @@
             `;
         }
 
-        async function loadSubmissions() {
+        // Removed loadSubmissions - using dedicated pages
+        async function loadSubmissions_removed() {
             if (!currentProblem) return;
             
             try {
@@ -1231,79 +1097,17 @@
             }
         }
 
-        function showOutput(message, type) {
-            const panel = document.getElementById('outputPanel');
-            const color = type === 'success' ? '#00ff00' : type === 'error' ? '#ff0000' : '#ffff00';
-            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : '⏳';
-            panel.innerHTML = `<div style="color: ${color}; white-space: pre-line; line-height: 1.6;">${message}</div>`;
-        }
+        // Removed showOutput - using dedicated pages
         
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-            
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-            document.getElementById(tabName + 'Tab').classList.remove('hidden');
-        }
+        // Removed switchTab - using dedicated pages
 
-        function setLoading(loading) {
-            const runBtn = document.getElementById('runBtn');
-            const submitBtn = document.getElementById('submitBtn');
-            const codeEditor = document.getElementById('codeEditor');
-            const languageSelect = document.getElementById('languageSelect');
-            
-            if (loading) {
-                runBtn.classList.add('loading');
-                submitBtn.classList.add('loading');
-                runBtn.innerHTML = '⏳ RUNNING...';
-                submitBtn.innerHTML = '🚀 SUBMITTING...';
-                runBtn.disabled = true;
-                submitBtn.disabled = true;
-                codeEditor.disabled = true;
-                languageSelect.disabled = true;
-            } else {
-                runBtn.classList.remove('loading');
-                submitBtn.classList.remove('loading');
-                runBtn.innerHTML = '▶️ RUN';
-                submitBtn.innerHTML = '🚀 SUBMIT';
-                runBtn.disabled = false;
-                submitBtn.disabled = false;
-                codeEditor.disabled = false;
-                languageSelect.disabled = false;
-            }
-        }
+        // Removed setLoading - using dedicated pages
 
-        function resetEditor() {
-            if (currentProblem && confirm('Reset code to template? This will lose your current changes.')) {
-                const language = document.getElementById('languageSelect').value;
-                const template = codeTemplates[currentProblem.id]?.[language] || 
-                               `// ${currentProblem.title}\n\n`;
-                document.getElementById('codeEditor').value = template;
-                localStorage.removeItem(`code_${currentProblem.id}_${language}`);
-                showOutput('Code reset to template.', 'info');
-            }
-        }
+        // Removed resetEditor - using dedicated pages
 
-        function downloadCode() {
-            const code = document.getElementById('codeEditor').value;
-            const language = document.getElementById('languageSelect').value;
-            const extensions = { cpp: 'cpp', java: 'java', python: 'py', javascript: 'js' };
-            
-            const blob = new Blob([code], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${currentProblem?.id || 'solution'}.${extensions[language] || 'txt'}`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
+        // Removed downloadCode - using dedicated pages
 
         // Event listeners
-        document.getElementById('languageSelect').addEventListener('change', updateCodeTemplate);
-        document.getElementById('runBtn').addEventListener('click', runCode);
-        document.getElementById('submitBtn').addEventListener('click', submitCode);
-        document.getElementById('resetBtn').addEventListener('click', resetEditor);
-        document.getElementById('downloadBtn').addEventListener('click', downloadCode);
         document.getElementById('loadMoreBtn').addEventListener('click', () => loadProblems(false));
 
         // Difficulty buttons
@@ -1356,39 +1160,14 @@
             window.tagFilterTimeout = setTimeout(() => loadProblems(true), 500);
         });
 
-        // Tab switching with accessibility
-        document.querySelectorAll('.tab-button').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tab-button').forEach(b => {
-                    b.classList.remove('active');
-                    b.setAttribute('aria-selected', 'false');
-                });
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-                
-                btn.classList.add('active');
-                btn.setAttribute('aria-selected', 'true');
-                document.getElementById(btn.dataset.tab + 'Tab').classList.remove('hidden');
-            });
-            
-            btn.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    btn.click();
-                }
-            });
-        });
+        // Removed tab switching - using dedicated pages
 
         // Initialize
         loadProblems(true);
     </script>
     <script src="/js/audio-system.js"></script>
     <script>
-        
-        // Restore last problem
-        const lastProblem = localStorage.getItem('currentProblem');
-        if (lastProblem) {
-            setTimeout(() => selectProblem(lastProblem), 1000);
-        }
+        // Problems now open in dedicated pages
     </script>
 </body>
 </html>

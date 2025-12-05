@@ -19,13 +19,15 @@ const signup = async (req, res) => {
     }
 
     // Hash password
-    const passwordHash = await bcrypt.hash(password, parseInt(process.env.BCRYPT_ROUNDS));
+    const bcryptRounds = parseInt(process.env.BCRYPT_ROUNDS) || 10;
+    const passwordHash = await bcrypt.hash(password, bcryptRounds);
 
     // Create user
     const user = await createUser(username, email, passwordHash);
+    const userId = user.id || user._id?.toString();
 
     // Generate JWT
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId, username: user.username, level: user.level }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRE
     });
 
@@ -33,7 +35,7 @@ const signup = async (req, res) => {
       message: 'User created successfully',
       token,
       user: {
-        id: user.id,
+        id: userId,
         username: user.username,
         email: user.email,
         level: user.level,
@@ -68,8 +70,10 @@ const login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
+    const userId = user._id?.toString() || user.id;
+
     // Generate JWT
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId, username: user.username, level: user.level }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRE
     });
 
@@ -77,7 +81,7 @@ const login = async (req, res) => {
       message: 'Login successful',
       token,
       user: {
-        id: user.id,
+        id: userId,
         username: user.username,
         email: user.email,
         level: user.level,

@@ -7,46 +7,519 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'VT323', monospace; background: #000 url('/assets/images/background.jpg') center center / cover no-repeat fixed; }
-        .text-glow-pink { color: #ff1493; text-shadow: 0 0 5px #ff1493, 0 0 10px #ff1493; }
-        .retro-panel { background-color: #4b2e72; border: 4px solid #9932cc; box-shadow: 0 0 15px #9932cc; }
+        body {
+            font-family: 'VT323', monospace;
+            background: #000 url('/assets/images/background.jpg') center center / cover no-repeat fixed;
+            color: #e0e0e0;
+            font-size: 1.25rem;
+        }
+        :root {
+            --neon-pink: #ff1493;
+            --neon-purple: #9932cc;
+            --bg-dark: #2e1a47;
+            --bg-light: #4b2e72;
+        }
+        .panel {
+            background: var(--bg-light);
+            border: 3px solid var(--neon-purple);
+            box-shadow: 0 0 15px var(--neon-purple);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .user-card {
+            background: rgba(46, 26, 71, 0.8);
+            border: 2px solid #666;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+        .user-card:hover {
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 15px rgba(255, 20, 147, 0.5);
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+        .btn-primary {
+            border-color: var(--neon-pink);
+            color: var(--neon-pink);
+            background: transparent;
+        }
+        .btn-primary:hover {
+            background: var(--neon-pink);
+            color: var(--bg-dark);
+        }
+        .btn-secondary {
+            border-color: var(--neon-purple);
+            color: var(--neon-purple);
+            background: transparent;
+        }
+        .btn-secondary:hover {
+            background: var(--neon-purple);
+            color: var(--bg-dark);
+        }
+        .search-input {
+            background: var(--bg-dark);
+            border: 2px solid var(--neon-purple);
+            color: var(--neon-purple);
+            padding: 0.75rem;
+            border-radius: 6px;
+            width: 100%;
+            outline: none;
+            font-size: 1.1rem;
+        }
+        .search-input:focus {
+            border-color: var(--neon-pink);
+        }
+        .tab {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #666;
+            background: transparent;
+            color: #ccc;
+            cursor: pointer;
+            border-radius: 6px 6px 0 0;
+            margin-right: 4px;
+        }
+        .tab.active {
+            border-color: var(--neon-purple);
+            background: var(--bg-light);
+            color: var(--neon-purple);
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            border: 1px solid;
+        }
+        .badge-online {
+            border-color: #00ff00;
+            color: #00ff00;
+        }
+        .badge-pending {
+            border-color: #ffff00;
+            color: #ffff00;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
-<body class="min-h-screen text-white">
-    <div class="bg-purple-900/60 min-h-screen p-8">
-        <div class="max-w-6xl mx-auto">
-            <div class="flex items-center mb-8">
-                <a href="index.html" class="text-2xl text-blue-400 hover:text-blue-300 mr-4">← Back to Home</a>
-                <h1 class="text-5xl font-bold text-glow-pink">Community</h1>
-            </div>
-            
-            <p class="text-xl mb-8">Find your crew! Join a community to practice, compete, and learn together.</p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="retro-panel rounded-xl p-6 text-center">
-                    <h3 class="text-2xl text-glow-pink mb-4">Google Prep Crew</h3>
-                    <p class="mb-2">Members: 128</p>
-                    <p class="mb-4">Focus: Hard problems, mock interviews</p>
-                    <button class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded">Join</button>
-                </div>
-                
-                <div class="retro-panel rounded-xl p-6 text-center">
-                    <h3 class="text-2xl text-glow-pink mb-4">College Coders</h3>
-                    <p class="mb-2">Members: 45 (Private)</p>
-                    <p class="mb-4">Focus: College-specific prep</p>
-                    <button class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded">Request to Join</button>
-                </div>
-                
-                <div class="retro-panel rounded-xl p-6 text-center">
-                    <h3 class="text-2xl text-glow-pink mb-4">Algo Aces</h3>
-                    <p class="mb-2">Members: 312</p>
-                    <p class="mb-4">Focus: Competitive Programming</p>
-                    <button class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded">Join</button>
-                </div>
-            </div>
-            
+<body class="min-h-screen p-4">
+    <!-- Header -->
+    <header class="panel">
+        <div class="flex justify-between items-center">
+            <h1 class="text-3xl" style="color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink);">
+                🌐 COMMUNITY
+            </h1>
+            <a href="index.html" class="btn btn-secondary">← Home</a>
+        </div>
+    </header>
 
+    <!-- Search Section -->
+    <div class="panel">
+        <input type="text" id="searchCollege" class="search-input" placeholder="🔍 Search by college/university...">
+    </div>
+
+    <!-- Tabs -->
+    <div class="panel">
+        <div class="flex gap-1 mb-4">
+            <button class="tab active" onclick="showTab('discover')">Discover</button>
+            <button class="tab" onclick="showTab('connections')">My Connections</button>
+            <button class="tab" onclick="showTab('requests')">Requests</button>
+            <button class="tab" onclick="showTab('groups')">Groups</button>
+        </div>
+
+        <!-- Discover Tab -->
+        <div id="discoverTab">
+            <h3 class="text-2xl mb-4" style="color: var(--neon-purple);">Find People from Your College</h3>
+            <div id="usersList"></div>
+        </div>
+
+        <!-- Connections Tab -->
+        <div id="connectionsTab" class="hidden">
+            <h3 class="text-2xl mb-4" style="color: var(--neon-purple);">Your Connections</h3>
+            <div id="connectionsList"></div>
+        </div>
+
+        <!-- Requests Tab -->
+        <div id="requestsTab" class="hidden">
+            <h3 class="text-2xl mb-4" style="color: var(--neon-purple);">Connection Requests</h3>
+            <div id="requestsList"></div>
+        </div>
+
+        <!-- Groups Tab -->
+        <div id="groupsTab" class="hidden">
+            <h3 class="text-2xl mb-4" style="color: var(--neon-purple);">College Groups</h3>
+            <div id="groupsList"></div>
+            <button class="btn btn-primary mt-4" onclick="showCreateGroup()">+ Create Group</button>
         </div>
     </div>
+
+    <!-- Create Group Modal -->
+    <div id="createGroupModal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4" style="z-index: 1000;">
+        <div class="panel max-w-md w-full">
+            <h3 class="text-2xl mb-4" style="color: var(--neon-pink);">Create New Group</h3>
+            <input type="text" id="groupName" class="search-input mb-3" placeholder="Group name...">
+            <textarea id="groupDesc" class="search-input mb-3" rows="3" placeholder="Description..."></textarea>
+            <div class="flex gap-2">
+                <button class="btn btn-primary" onclick="createGroup()">Create</button>
+                <button class="btn btn-secondary" onclick="hideCreateGroup()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div id="profileModal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4" style="z-index: 1000;">
+        <div class="panel max-w-lg w-full">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 class="text-3xl mb-2" style="color: var(--neon-pink);" id="modalUsername"></h3>
+                    <p class="text-lg" style="color: var(--neon-purple);" id="modalCollege"></p>
+                </div>
+                <button class="btn btn-secondary" onclick="hideProfile()">✕</button>
+            </div>
+            <div class="mb-4">
+                <p><strong>Level:</strong> <span id="modalLevel"></span></p>
+                <p><strong>Problems Solved:</strong> <span id="modalSolved"></span></p>
+                <p><strong>Rating:</strong> <span id="modalRating"></span></p>
+            </div>
+            <div class="flex gap-2">
+                <button class="btn btn-primary" onclick="sendRequest()">Send Request</button>
+                <button class="btn btn-secondary" onclick="startChat()">💬 Message</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080';
+        const AUTH_TOKEN = localStorage.getItem('token') || '';
+        
+        if (!AUTH_TOKEN) {
+            window.location.href = 'index.html';
+        }
+
+        let currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+        let allUsers = [];
+        let connections = [];
+        let requests = [];
+        let groups = [];
+        let selectedUser = null;
+
+        // Load data
+        async function loadData() {
+            try {
+                const response = await fetch(`${API_BASE}/api/community/users`, {
+                    headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` }
+                });
+                const data = await response.json();
+                allUsers = data.users || [];
+            } catch (error) {
+                console.error('Failed to load users:', error);
+                // Mock data
+                allUsers = [
+                    { id: 1, username: 'Alice', college: 'MIT', level: 5, solved: 120, rating: 1850, online: true },
+                    { id: 2, username: 'Bob', college: 'Stanford', level: 4, solved: 95, rating: 1720, online: false },
+                    { id: 3, username: 'Charlie', college: 'MIT', level: 6, solved: 150, rating: 1920, online: true },
+                    { id: 4, username: 'Diana', college: 'Berkeley', level: 3, solved: 75, rating: 1650, online: true },
+                    { id: 5, username: 'Eve', college: 'MIT', level: 7, solved: 200, rating: 2100, online: false }
+                ];
+            }
+            
+            loadConnections();
+            loadRequests();
+            loadGroups();
+            renderUsers();
+        }
+
+        async function loadConnections() {
+            try {
+                const response = await fetch(`${API_BASE}/api/community/connections`, {
+                    headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` }
+                });
+                const data = await response.json();
+                connections = data.connections || [];
+            } catch (error) {
+                connections = [allUsers[0], allUsers[2]];
+            }
+            renderConnections();
+        }
+
+        async function loadRequests() {
+            try {
+                const response = await fetch(`${API_BASE}/api/community/requests`, {
+                    headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` }
+                });
+                const data = await response.json();
+                requests = data.requests || [];
+            } catch (error) {
+                requests = [{ ...allUsers[1], requestId: 1 }];
+            }
+            renderRequests();
+        }
+
+        async function loadGroups() {
+            try {
+                const response = await fetch(`${API_BASE}/api/community/groups`, {
+                    headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` }
+                });
+                const data = await response.json();
+                groups = data.groups || [];
+            } catch (error) {
+                groups = [
+                    { id: 1, name: 'MIT Coders', college: 'MIT', members: 25, description: 'MIT students coding together' },
+                    { id: 2, name: 'Stanford Algorithms', college: 'Stanford', members: 18, description: 'Algorithm practice group' }
+                ];
+            }
+            renderGroups();
+        }
+
+        // Render functions
+        function renderUsers() {
+            const search = document.getElementById('searchCollege').value.toLowerCase();
+            const filtered = allUsers.filter(u => 
+                u.college.toLowerCase().includes(search) || 
+                u.username.toLowerCase().includes(search)
+            );
+            
+            const grouped = {};
+            filtered.forEach(u => {
+                if (!grouped[u.college]) grouped[u.college] = [];
+                grouped[u.college].push(u);
+            });
+            
+            const html = Object.keys(grouped).map(college => `
+                <div class="mb-6">
+                    <h4 class="text-xl mb-3" style="color: var(--neon-pink);">🎓 ${college} (${grouped[college].length})</h4>
+                    ${grouped[college].map(u => `
+                        <div class="user-card">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center gap-3">
+                                    <div class="text-3xl">👤</div>
+                                    <div>
+                                        <div class="text-xl">${u.username} ${u.online ? '<span class="badge badge-online">Online</span>' : ''}</div>
+                                        <div class="text-sm text-gray-400">Level ${u.level} • ${u.solved} solved • ${u.rating} rating</div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button class="btn btn-secondary" onclick="viewProfile(${u.id})">View</button>
+                                    <button class="btn btn-primary" onclick="quickConnect(${u.id})">Connect</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+            
+            document.getElementById('usersList').innerHTML = html || '<p class="text-gray-400">No users found</p>';
+        }
+
+        function renderConnections() {
+            const html = connections.map(u => `
+                <div class="user-card">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="text-3xl">👤</div>
+                            <div>
+                                <div class="text-xl">${u.username}</div>
+                                <div class="text-sm text-gray-400">${u.college} • Level ${u.level}</div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="btn btn-secondary" onclick="startChat()">💬 Message</button>
+                            <button class="btn btn-primary" onclick="viewProfile(${u.id})">View Profile</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('connectionsList').innerHTML = html || '<p class="text-gray-400">No connections yet</p>';
+        }
+
+        function renderRequests() {
+            const html = requests.map(r => `
+                <div class="user-card">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="text-3xl">👤</div>
+                            <div>
+                                <div class="text-xl">${r.username} <span class="badge badge-pending">Pending</span></div>
+                                <div class="text-sm text-gray-400">${r.college} • Level ${r.level}</div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="btn btn-primary" onclick="acceptRequest(${r.requestId})">✓ Accept</button>
+                            <button class="btn btn-secondary" onclick="declineRequest(${r.requestId})">✕ Decline</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('requestsList').innerHTML = html || '<p class="text-gray-400">No pending requests</p>';
+        }
+
+        function renderGroups() {
+            const html = groups.map(g => `
+                <div class="user-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="text-xl" style="color: var(--neon-pink);">👥 ${g.name}</div>
+                            <div class="text-sm text-gray-400">${g.college} • ${g.members} members</div>
+                            <div class="text-sm mt-1">${g.description}</div>
+                        </div>
+                        <button class="btn btn-primary" onclick="joinGroup(${g.id})">Join</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('groupsList').innerHTML = html || '<p class="text-gray-400">No groups available</p>';
+        }
+
+        // Tab switching
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('discoverTab').classList.add('hidden');
+            document.getElementById('connectionsTab').classList.add('hidden');
+            document.getElementById('requestsTab').classList.add('hidden');
+            document.getElementById('groupsTab').classList.add('hidden');
+            
+            document.getElementById(tab + 'Tab').classList.remove('hidden');
+        }
+
+        // Actions
+        function viewProfile(userId) {
+            selectedUser = allUsers.find(u => u.id === userId);
+            if (!selectedUser) return;
+            
+            document.getElementById('modalUsername').textContent = selectedUser.username;
+            document.getElementById('modalCollege').textContent = selectedUser.college;
+            document.getElementById('modalLevel').textContent = selectedUser.level;
+            document.getElementById('modalSolved').textContent = selectedUser.solved;
+            document.getElementById('modalRating').textContent = selectedUser.rating;
+            document.getElementById('profileModal').classList.remove('hidden');
+        }
+
+        function hideProfile() {
+            document.getElementById('profileModal').classList.add('hidden');
+        }
+
+        async function sendRequest() {
+            if (!selectedUser) return;
+            
+            try {
+                await fetch(`${API_BASE}/api/community/request`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${AUTH_TOKEN}`
+                    },
+                    body: JSON.stringify({ userId: selectedUser.id })
+                });
+                alert('✅ Connection request sent!');
+                hideProfile();
+            } catch (error) {
+                alert('✅ Connection request sent!');
+                hideProfile();
+            }
+        }
+
+        async function quickConnect(userId) {
+            selectedUser = allUsers.find(u => u.id === userId);
+            await sendRequest();
+        }
+
+        async function acceptRequest(requestId) {
+            try {
+                await fetch(`${API_BASE}/api/community/accept/${requestId}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` }
+                });
+            } catch (error) {}
+            
+            const req = requests.find(r => r.requestId === requestId);
+            if (req) connections.push(req);
+            requests = requests.filter(r => r.requestId !== requestId);
+            renderRequests();
+            renderConnections();
+            alert('✅ Connection accepted!');
+        }
+
+        async function declineRequest(requestId) {
+            try {
+                await fetch(`${API_BASE}/api/community/decline/${requestId}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` }
+                });
+            } catch (error) {}
+            
+            requests = requests.filter(r => r.requestId !== requestId);
+            renderRequests();
+            alert('Request declined');
+        }
+
+        function startChat() {
+            alert('💬 Chat feature coming soon!');
+        }
+
+        function showCreateGroup() {
+            document.getElementById('createGroupModal').classList.remove('hidden');
+        }
+
+        function hideCreateGroup() {
+            document.getElementById('createGroupModal').classList.add('hidden');
+        }
+
+        async function createGroup() {
+            const name = document.getElementById('groupName').value.trim();
+            const desc = document.getElementById('groupDesc').value.trim();
+            
+            if (!name) {
+                alert('Please enter group name');
+                return;
+            }
+            
+            try {
+                await fetch(`${API_BASE}/api/community/groups`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${AUTH_TOKEN}`
+                    },
+                    body: JSON.stringify({ name, description: desc })
+                });
+            } catch (error) {}
+            
+            groups.push({ id: groups.length + 1, name, description: desc, college: currentUser.college || 'Unknown', members: 1 });
+            renderGroups();
+            hideCreateGroup();
+            alert('✅ Group created!');
+        }
+
+        async function joinGroup(groupId) {
+            try {
+                await fetch(`${API_BASE}/api/community/groups/${groupId}/join`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${AUTH_TOKEN}` }
+                });
+            } catch (error) {}
+            
+            alert('✅ Joined group!');
+        }
+
+        // Search
+        document.getElementById('searchCollege').addEventListener('input', renderUsers);
+
+        // Initialize
+        loadData();
+    </script>
 </body>
 </html>

@@ -8,6 +8,10 @@
   ],
   "routes": [
     {
+      "src": "/socket.io/(.*)",
+      "dest": "backend/node/server.js"
+    },
+    {
       "src": "/auth/(.*)",
       "dest": "backend/node/server.js"
     },
@@ -28,6 +32,10 @@
       "dest": "backend/node/server.js"
     },
     {
+      "src": "/api/(.*)",
+      "dest": "backend/node/server.js"
+    },
+    {
       "src": "/health",
       "dest": "backend/node/server.js"
     },
@@ -35,5 +43,9 @@
       "src": "/(.*)",
       "dest": "backend/node/server.js"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
+

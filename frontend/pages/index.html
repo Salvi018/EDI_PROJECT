@@ -513,10 +513,10 @@
                     <p class="card-description">Solve DSA problems</p>
                 </a>
                 
-                <a href="headon.html" class="card fade-in-up stagger-3">
+                <a href="battle.html" class="card fade-in-up stagger-3">
                     <div class="card-icon-badge">⚔️</div>
-                    <h3 class="card-title text-glow-purple">1v1 Battle</h3>
-                    <p class="card-description">Challenge other coders</p>
+                    <h3 class="card-title text-glow-pink">1v1 Battle</h3>
+                    <p class="card-description">Challenge other coders in real-time</p>
                 </a>
                 
                 <a href="learn.html" class="card fade-in-up stagger-4">
@@ -542,6 +542,18 @@
                     <h3 class="card-title text-glow-cyan">StudyBot</h3>
                     <p class="card-description">AI study planner for exams</p>
                 </a>
+                
+                <a href="test.html" class="card fade-in-up stagger-5">
+                    <div class="card-icon-badge">📝</div>
+                    <h3 class="card-title text-glow-pink">Test</h3>
+                    <p class="card-description">Take 5-question coding test</p>
+                </a>
+                
+                <a href="community.html" class="card fade-in-up stagger-6">
+                    <div class="card-icon-badge">🌐</div>
+                    <h3 class="card-title text-glow-cyan">Community</h3>
+                    <p class="card-description">Connect with college peers</p>
+                </a>
             </div>
 
             <div class="text-center mt-12">
@@ -554,8 +566,9 @@
 
     <script src="/js/audio-system.js"></script>
     <script>
-        let authToken = localStorage.getItem('codecade_token') || '';
-        let authUsername = localStorage.getItem('codecade_user') || '';
+        let authToken = localStorage.getItem('token') || '';
+        let authUser = JSON.parse(localStorage.getItem('user') || '{}');
+        let authUsername = authUser.username || '';
 
         function showLogin() {
             document.getElementById('page-login').classList.remove('hidden');
@@ -602,8 +615,8 @@
                 
                 authToken = data.token;
                 authUsername = data.user.username;
-                localStorage.setItem('codecade_token', authToken);
-                localStorage.setItem('codecade_user', authUsername);
+                localStorage.setItem('token', authToken);
+                localStorage.setItem('user', JSON.stringify(data.user));
                 
                 showApp();
             } catch (error) {
@@ -644,8 +657,8 @@
         });
 
         function logout() {
-            localStorage.removeItem('codecade_token');
-            localStorage.removeItem('codecade_user');
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
             authToken = '';
             authUsername = '';
             showAuth();

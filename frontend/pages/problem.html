@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Problem - Codecade</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'VT323', monospace;
+            background: #000 url('/assets/images/background.jpg') center center / cover no-repeat fixed !important;
+            color: #e0e0e0;
+            font-size: 1.25rem;
+        }
+        :root {
+            --neon-pink: #ff1493;
+            --neon-purple: #9932cc;
+            --neon-magenta: #da70d6;
+            --bg-dark: #2e1a47;
+            --bg-light: #4b2e72;
+        }
+        .retro-panel {
+            background-color: var(--bg-light);
+            border: 4px solid var(--neon-purple);
+            box-shadow: 0 0 15px var(--neon-purple);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+        .retro-btn {
+            font-family: 'VT323', monospace;
+            padding: 0.5rem 1rem;
+            border: 3px solid;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .retro-btn-pink { border-color: #ff69b4; color: #ff69b4; }
+        .retro-btn-pink:hover { background: #ff69b4; color: var(--bg-dark); }
+        .retro-btn-purple { border-color: var(--neon-purple); color: var(--neon-purple); }
+        .retro-btn-purple:hover { background: var(--neon-purple); color: var(--bg-dark); }
+        .code-editor {
+            font-family: 'Courier New', monospace;
+            background: #0a0a23;
+            color: var(--neon-magenta);
+            border: 2px solid var(--neon-magenta);
+            border-radius: 8px;
+            padding: 1rem;
+            width: 100%;
+            height: 400px;
+            resize: vertical;
+        }
+        .output-panel {
+            background: #000;
+            border: 2px solid var(--neon-purple);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            color: #00ff00;
+            height: 200px;
+            overflow-y: auto;
+        }
+        .tab-button {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--neon-purple);
+            background: transparent;
+            color: var(--neon-purple);
+            cursor: pointer;
+            border-radius: 4px 4px 0 0;
+        }
+        .tab-button.active { background: var(--neon-purple); color: var(--bg-dark); }
+        .test-case {
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .test-case.passed { border-color: #00ff00; background: rgba(0, 255, 0, 0.1); }
+        .test-case.failed { border-color: #ff0000; background: rgba(255, 0, 0, 0.1); }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="min-h-screen p-4">
+    <header class="retro-panel mb-4">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl" style="color: var(--neon-pink);" id="problemTitle">Loading...</h1>
+            <div class="flex gap-2">
+                <a href="practice-new.html" class="retro-btn retro-btn-purple">← BACK</a>
+                <a href="dashboard.html" class="retro-btn retro-btn-pink">DASHBOARD</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex flex-col xl:flex-row gap-4">
+        <div class="w-full xl:w-1/2">
+            <div class="retro-panel" id="problemStatement"></div>
+        </div>
+
+        <div class="w-full xl:w-1/2">
+            <div class="retro-panel mb-4">
+                <div class="flex justify-between mb-3">
+                    <h3 class="text-lg" style="color: var(--neon-purple);">CODE EDITOR</h3>
+                    <div class="flex gap-2">
+                        <select id="languageSelect" class="retro-btn retro-btn-purple">
+                            <option value="cpp">C++</option>
+                            <option value="java">Java</option>
+                            <option value="python">Python</option>
+                            <option value="javascript">JavaScript</option>
+                        </select>
+                        <button id="resetBtn" class="retro-btn retro-btn-purple">RESET</button>
+                    </div>
+                </div>
+                <textarea id="codeEditor" class="code-editor"></textarea>
+                <div class="flex justify-between mt-3">
+                    <div class="flex gap-2">
+                        <button id="runBtn" class="retro-btn retro-btn-purple">▶️ RUN</button>
+                        <button id="submitBtn" class="retro-btn retro-btn-pink">🚀 SUBMIT</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="retro-panel">
+                <div class="flex gap-1 mb-3">
+                    <button class="tab-button active" data-tab="output">Output</button>
+                    <button class="tab-button" data-tab="tests">Test Cases</button>
+                </div>
+                <div id="outputTab" class="tab-content">
+                    <div id="outputPanel" class="output-panel">Run your code to see output...</div>
+                </div>
+                <div id="testsTab" class="tab-content hidden">
+                    <div id="testCases" class="max-h-48 overflow-y-auto"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/problem-solver.js"></script>
+</body>
+</html>

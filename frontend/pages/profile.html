@@ -68,6 +68,9 @@
                         <button id="editBtn" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded text-sm font-bold transition-colors hidden" aria-label="Edit profile">
                             ✏️ Edit
                         </button>
+                        <button id="deleteBtn" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm font-bold transition-colors hidden" aria-label="Delete profile">
+                            🗑️ Delete
+                        </button>
                     </div>
                 </div>
             </div>
@@ -341,6 +344,7 @@
             // Show edit button if own profile
             if (profileData.isOwnProfile) {
                 document.getElementById('editBtn').classList.remove('hidden');
+                document.getElementById('deleteBtn').classList.remove('hidden');
                 document.getElementById('followBtn').classList.add('hidden');
             }
             
@@ -378,6 +382,31 @@
 
         // Event listeners
         document.getElementById('editBtn').addEventListener('click', openEditModal);
+        
+        document.getElementById('deleteBtn').addEventListener('click', async function() {
+            if (!confirm('Are you sure you want to delete your profile? This action cannot be undone.')) return;
+            
+            const token = localStorage.getItem('codecade_token');
+            if (!token) return;
+            
+            try {
+                const res = await fetch('http://localhost:8080/user/profile', {
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                
+                if (res.ok) {
+                    alert('Profile deleted successfully');
+                    localStorage.removeItem('codecade_token');
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Failed to delete profile');
+                }
+            } catch (error) {
+                console.error('Delete error:', error);
+                alert('Error deleting profile');
+            }
+        });
         
         document.getElementById('editForm').addEventListener('submit', function(e) {
             e.preventDefault();

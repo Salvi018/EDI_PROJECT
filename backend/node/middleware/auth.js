@@ -9,8 +9,9 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ error: 'No token provided' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'codecade_secret_key');
     req.userId = decoded.userId;
+    req.user = { id: decoded.userId, username: decoded.username, level: decoded.level };
     next();
   } catch (error) {
     return res.status(401).json({ error: 'Invalid token' });

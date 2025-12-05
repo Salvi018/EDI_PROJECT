@@ -1,5 +1,6 @@
 // CODECADE Frontend API Integration
-const API_URL = 'http://localhost:8080';
+// Automatically detect API URL for local or production
+const API_URL = window.location.origin || 'http://localhost:8080';
 
 // Auth Functions
 async function signup(username, email, password) {
@@ -37,14 +38,14 @@ async function login(email, password) {
 function logout() {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
-  window.location.href = '/login.html';
+  window.location.href = '/index.html';
 }
 
 // Auth Check
 function checkAuth() {
   const token = localStorage.getItem('token');
   if (!token) {
-    window.location.href = '/login.html';
+    window.location.href = '/index.html';
     return false;
   }
   return true;

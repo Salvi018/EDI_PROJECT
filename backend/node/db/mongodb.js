@@ -16,6 +16,9 @@ async function connectDB() {
 }
 
 function getDB() {
+  if (!db) {
+    console.warn('⚠️  MongoDB not connected. Some features may not work.');
+  }
   return db;
 }
 

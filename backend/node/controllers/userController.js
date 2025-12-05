@@ -1,4 +1,4 @@
-const { findUserById, updateStreak } = require('../models/userModel');
+const { findUserById, updateStreak, deleteUser } = require('../models/userModel');
 const { getSolvedProblems } = require('../models/problemModel');
 const { getCompletedLessons } = require('../models/lessonModel');
 
@@ -46,7 +46,18 @@ const getUserProgress = async (req, res) => {
   }
 };
 
+const deleteUserProfile = async (req, res) => {
+  try {
+    await deleteUser(req.userId);
+    res.json({ message: 'Profile deleted successfully' });
+  } catch (error) {
+    console.error('Delete profile error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
 module.exports = {
   getUserStats,
-  getUserProgress
+  getUserProgress,
+  deleteUserProfile
 };
