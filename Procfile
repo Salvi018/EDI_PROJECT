@@ -1,2 +1,2 @@
-web: cd backend/node && node server.js
+web: cd backend/python && gunicorn -w 4 -b 0.0.0.0:$PORT app:app
 
