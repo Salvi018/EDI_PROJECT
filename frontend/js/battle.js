@@ -77,18 +77,30 @@ async function loadUserStats() {
     const response = await fetch(`${API_BASE}/battle/stats`, {
       headers: { Authorization: `Bearer ${AUTH_TOKEN}` },
     });
-    const stats = await response.json();
-
-    document.getElementById("userWins").textContent = stats.wins || 0;
-    document.getElementById("userLosses").textContent = stats.losses || 0;
-    document.getElementById("userRating").textContent = stats.rating || 1200;
-    const winRate =
-      stats.wins + stats.losses > 0
-        ? Math.round((stats.wins / (stats.wins + stats.losses)) * 100)
-        : 0;
-    document.getElementById("winRate").textContent = winRate + "%";
+    if (response.ok) {
+      const stats = await response.json();
+      document.getElementById("userWins").textContent = stats.wins || 0;
+      document.getElementById("userLosses").textContent = stats.losses || 0;
+      document.getElementById("userRating").textContent = stats.rating || 1200;
+      const winRate =
+        stats.wins + stats.losses > 0
+          ? Math.round((stats.wins / (stats.wins + stats.losses)) * 100)
+          : 0;
+      document.getElementById("winRate").textContent = winRate + "%";
+    } else {
+      // Fallback to default stats if endpoint not available
+      document.getElementById("userWins").textContent = "0";
+      document.getElementById("userLosses").textContent = "0";
+      document.getElementById("userRating").textContent = "1200";
+      document.getElementById("winRate").textContent = "0%";
+    }
   } catch (error) {
-    console.error("Failed to load stats:", error);
+    console.warn("Battle stats endpoint not available, using defaults");
+    // Fallback to default stats
+    document.getElementById("userWins").textContent = "0";
+    document.getElementById("userLosses").textContent = "0";
+    document.getElementById("userRating").textContent = "1200";
+    document.getElementById("winRate").textContent = "0%";
   }
 }
 
@@ -98,10 +110,17 @@ async function loadOnlinePlayers() {
     const response = await fetch(`${API_BASE}/battle/online`, {
       headers: { Authorization: `Bearer ${AUTH_TOKEN}` },
     });
-    const players = await response.json();
-    updatePlayersList(players);
+    if (response.ok) {
+      const players = await response.json();
+      updatePlayersList(players);
+    } else {
+      // Fallback to empty players list if endpoint not available
+      updatePlayersList([]);
+    }
   } catch (error) {
-    console.error("Failed to load players:", error);
+    console.warn("Battle players endpoint not available");
+    // Fallback to empty players list
+    updatePlayersList([]);
   }
 }
 

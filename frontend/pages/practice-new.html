@@ -635,7 +635,7 @@
     </div>
 
     <script>
-        const AUTH_TOKEN = localStorage.getItem('codecade_token') || '';
+        const AUTH_TOKEN = localStorage.getItem('token') || '';
         
         // Check if user is logged in
         if (!AUTH_TOKEN) {
@@ -1154,18 +1154,20 @@
         });
 
         // Tag filter
-        document.getElementById('tagFilter').addEventListener('input', (e) => {
-            currentTag = e.target.value;
-            clearTimeout(window.tagFilterTimeout);
-            window.tagFilterTimeout = setTimeout(() => loadProblems(true), 500);
-        });
+        const tagFilterElement = document.getElementById('tagFilter');
+        if (tagFilterElement) {
+            tagFilterElement.addEventListener('input', (e) => {
+                currentTag = e.target.value;
+                clearTimeout(window.tagFilterTimeout);
+                window.tagFilterTimeout = setTimeout(() => loadProblems(true), 500);
+            });
+        }
 
         // Removed tab switching - using dedicated pages
 
         // Initialize
         loadProblems(true);
     </script>
-    <script src="/js/audio-system.js"></script>
     <script>
         // Problems now open in dedicated pages
     </script>

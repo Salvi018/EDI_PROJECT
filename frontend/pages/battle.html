@@ -1,201 +1,416 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>1V1 Battle - CODECADE</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <script src="/js/config.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <style>
-        body { font-family: 'VT323', monospace; background: #000 url('/assets/images/background.jpg') center/cover fixed; color: #e0e0e0; font-size: 1.25rem; }
-        :root { --neon-pink: #ff1493; --neon-purple: #9932cc; --neon-magenta: #da70d6; --bg-dark: #2e1a47; --bg-light: #4b2e72; }
-        .text-glow-pink { color: var(--neon-pink); text-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink); }
-        .text-glow-purple { color: var(--neon-purple); text-shadow: 0 0 5px var(--neon-purple); }
-        .text-glow-magenta { color: var(--neon-magenta); text-shadow: 0 0 5px var(--neon-magenta); }
-        .retro-panel { background: var(--bg-light); border: 4px solid var(--neon-purple); box-shadow: 0 0 15px var(--neon-purple); padding: 1.5rem; border-radius: 8px; }
-        .retro-btn { font-family: 'VT323', monospace; font-size: 1.25rem; padding: 0.75rem 1.5rem; border: 4px solid; border-radius: 8px; cursor: pointer; text-transform: uppercase; transition: all 0.2s; }
-        .retro-btn-pink { border-color: var(--neon-pink); color: var(--neon-pink); box-shadow: 0 0 10px var(--neon-pink); }
-        .retro-btn-pink:hover { background: var(--neon-pink); color: var(--bg-dark); box-shadow: 0 0 20px var(--neon-pink); }
-        .online-dot { width: 12px; height: 12px; background: #00ff00; border-radius: 50%; box-shadow: 0 0 10px #00ff00; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .timer { font-size: 3rem; color: var(--neon-pink); text-shadow: 0 0 20px var(--neon-pink); }
-        .score-board { background: linear-gradient(135deg, var(--bg-light), var(--bg-dark)); border: 3px solid var(--neon-magenta); padding: 1rem; border-radius: 8px; }
-        .question-card { background: var(--bg-dark); border: 3px solid var(--neon-purple); padding: 1.5rem; border-radius: 8px; margin: 1rem 0; }
-        .option-btn { background: var(--bg-dark); border: 2px solid var(--neon-purple); padding: 1rem; margin: 0.5rem 0; border-radius: 4px; cursor: pointer; transition: all 0.3s; }
-        .option-btn:hover { background: var(--neon-purple); color: #fff; transform: translateX(10px); }
-        .option-btn.selected { background: var(--neon-magenta); border-color: var(--neon-pink); }
-        .option-btn.correct { background: #00ff00; border-color: #00ff00; color: #000; }
-        .option-btn.incorrect { background: #ff0000; border-color: #ff0000; }
-        .loading-spinner { border: 4px solid var(--bg-light); border-top: 4px solid var(--neon-pink); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .vs-animation { font-size: 5rem; color: var(--neon-pink); text-shadow: 0 0 30px var(--neon-pink); animation: vsGlow 1s infinite; }
-        @keyframes vsGlow { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
-        .modal { background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(5px); }
-        .player-avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--neon-magenta); box-shadow: 0 0 15px var(--neon-magenta); }
-        .progress-bar { height: 8px; background: var(--bg-dark); border-radius: 4px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--neon-pink), var(--neon-magenta)); transition: width 0.3s; }
+      body {
+        font-family: "VT323", monospace;
+        background: #000 url("/assets/images/background.jpg") center/cover fixed;
+        color: #e0e0e0;
+        font-size: 1.25rem;
+      }
+      :root {
+        --neon-pink: #ff1493;
+        --neon-purple: #9932cc;
+        --neon-magenta: #da70d6;
+        --bg-dark: #2e1a47;
+        --bg-light: #4b2e72;
+      }
+      .text-glow-pink {
+        color: var(--neon-pink);
+        text-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink);
+      }
+      .text-glow-purple {
+        color: var(--neon-purple);
+        text-shadow: 0 0 5px var(--neon-purple);
+      }
+      .text-glow-magenta {
+        color: var(--neon-magenta);
+        text-shadow: 0 0 5px var(--neon-magenta);
+      }
+      .retro-panel {
+        background: var(--bg-light);
+        border: 4px solid var(--neon-purple);
+        box-shadow: 0 0 15px var(--neon-purple);
+        padding: 1.5rem;
+        border-radius: 8px;
+      }
+      .retro-btn {
+        font-family: "VT323", monospace;
+        font-size: 1.25rem;
+        padding: 0.75rem 1.5rem;
+        border: 4px solid;
+        border-radius: 8px;
+        cursor: pointer;
+        text-transform: uppercase;
+        transition: all 0.2s;
+      }
+      .retro-btn-pink {
+        border-color: var(--neon-pink);
+        color: var(--neon-pink);
+        box-shadow: 0 0 10px var(--neon-pink);
+      }
+      .retro-btn-pink:hover {
+        background: var(--neon-pink);
+        color: var(--bg-dark);
+        box-shadow: 0 0 20px var(--neon-pink);
+      }
+      .online-dot {
+        width: 12px;
+        height: 12px;
+        background: #00ff00;
+        border-radius: 50%;
+        box-shadow: 0 0 10px #00ff00;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+      .timer {
+        font-size: 3rem;
+        color: var(--neon-pink);
+        text-shadow: 0 0 20px var(--neon-pink);
+      }
+      .score-board {
+        background: linear-gradient(135deg, var(--bg-light), var(--bg-dark));
+        border: 3px solid var(--neon-magenta);
+        padding: 1rem;
+        border-radius: 8px;
+      }
+      .question-card {
+        background: var(--bg-dark);
+        border: 3px solid var(--neon-purple);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+      }
+      .option-btn {
+        background: var(--bg-dark);
+        border: 2px solid var(--neon-purple);
+        padding: 1rem;
+        margin: 0.5rem 0;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .option-btn:hover {
+        background: var(--neon-purple);
+        color: #fff;
+        transform: translateX(10px);
+      }
+      .option-btn.selected {
+        background: var(--neon-magenta);
+        border-color: var(--neon-pink);
+      }
+      .option-btn.correct {
+        background: #00ff00;
+        border-color: #00ff00;
+        color: #000;
+      }
+      .option-btn.incorrect {
+        background: #ff0000;
+        border-color: #ff0000;
+      }
+      .loading-spinner {
+        border: 4px solid var(--bg-light);
+        border-top: 4px solid var(--neon-pink);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .vs-animation {
+        font-size: 5rem;
+        color: var(--neon-pink);
+        text-shadow: 0 0 30px var(--neon-pink);
+        animation: vsGlow 1s infinite;
+      }
+      @keyframes vsGlow {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+      }
+      .modal {
+        background: rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(5px);
+      }
+      .player-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 3px solid var(--neon-magenta);
+        box-shadow: 0 0 15px var(--neon-magenta);
+      }
+      .progress-bar {
+        height: 8px;
+        background: var(--bg-dark);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          var(--neon-pink),
+          var(--neon-magenta)
+        );
+        transition: width 0.3s;
+      }
     </style>
-</head>
-<body class="min-h-screen p-4">
+  </head>
+  <body class="min-h-screen p-4">
     <!-- Lobby Screen -->
     <div id="lobbyScreen" class="max-w-6xl mx-auto">
-        <header class="retro-panel mb-6">
-            <div class="flex justify-between items-center">
-                <h1 class="text-3xl text-glow-pink">1V1 BATTLE ARENA</h1>
-                <a href="dashboard.html" class="retro-btn retro-btn-pink text-sm">← BACK</a>
-            </div>
-        </header>
+      <header class="retro-panel mb-6">
+        <div class="flex justify-between items-center">
+          <h1 class="text-3xl text-glow-pink">1V1 BATTLE ARENA</h1>
+          <a href="dashboard.html" class="retro-btn retro-btn-pink text-sm"
+            >← BACK</a
+          >
+        </div>
+      </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Online Players -->
-            <div class="retro-panel">
-                <h2 class="text-2xl text-glow-magenta mb-4">ONLINE PLAYERS (<span id="onlineCount">0</span>)</h2>
-                <div id="playersList" class="space-y-3 max-h-96 overflow-y-auto"></div>
-            </div>
-
-            <!-- Matchmaking -->
-            <div class="retro-panel">
-                <h2 class="text-2xl text-glow-magenta mb-4">QUICK MATCH</h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-glow-purple">SKILL LEVEL:</label>
-                        <select id="skillLevel" class="w-full p-2 bg-gray-800 border-2 border-purple-500 rounded mt-2">
-                            <option value="beginner">Beginner (Level 1-5)</option>
-                            <option value="intermediate">Intermediate (Level 6-10)</option>
-                            <option value="advanced">Advanced (Level 11+)</option>
-                            <option value="any">Any Level</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-glow-purple">TOPIC:</label>
-                        <select id="topicSelect" class="w-full p-2 bg-gray-800 border-2 border-purple-500 rounded mt-2">
-                            <option value="any">Any Topic</option>
-                            <option value="arrays">Arrays</option>
-                            <option value="strings">Strings</option>
-                            <option value="trees">Trees</option>
-                            <option value="graphs">Graphs</option>
-                            <option value="dp">Dynamic Programming</option>
-                        </select>
-                    </div>
-                    <button id="findMatchBtn" class="retro-btn retro-btn-pink w-full">FIND MATCH</button>
-                    <div id="matchmakingStatus" class="hidden text-center">
-                        <div class="loading-spinner mx-auto mb-2"></div>
-                        <p class="text-glow-magenta">Searching for opponent...</p>
-                    </div>
-                </div>
-            </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Online Players -->
+        <div class="retro-panel">
+          <h2 class="text-2xl text-glow-magenta mb-4">
+            ONLINE PLAYERS (<span id="onlineCount">0</span>)
+          </h2>
+          <div
+            id="playersList"
+            class="space-y-3 max-h-96 overflow-y-auto"
+          ></div>
         </div>
 
-        <!-- User Stats -->
-        <div class="retro-panel mt-6">
-            <h2 class="text-2xl text-glow-magenta mb-4">YOUR STATS</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="score-board text-center">
-                    <div class="text-3xl text-glow-pink" id="userWins">0</div>
-                    <div class="text-sm">WINS</div>
-                </div>
-                <div class="score-board text-center">
-                    <div class="text-3xl text-glow-magenta" id="userLosses">0</div>
-                    <div class="text-sm">LOSSES</div>
-                </div>
-                <div class="score-board text-center">
-                    <div class="text-3xl text-glow-purple" id="userRating">1200</div>
-                    <div class="text-sm">RATING</div>
-                </div>
-                <div class="score-board text-center">
-                    <div class="text-3xl text-glow-pink" id="winRate">0%</div>
-                    <div class="text-sm">WIN RATE</div>
-                </div>
+        <!-- Matchmaking -->
+        <div class="retro-panel">
+          <h2 class="text-2xl text-glow-magenta mb-4">QUICK MATCH</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="text-glow-purple">SKILL LEVEL:</label>
+              <select
+                id="skillLevel"
+                class="w-full p-2 bg-gray-800 border-2 border-purple-500 rounded mt-2"
+              >
+                <option value="beginner">Beginner (Level 1-5)</option>
+                <option value="intermediate">Intermediate (Level 6-10)</option>
+                <option value="advanced">Advanced (Level 11+)</option>
+                <option value="any">Any Level</option>
+              </select>
             </div>
+            <div>
+              <label class="text-glow-purple">TOPIC:</label>
+              <select
+                id="topicSelect"
+                class="w-full p-2 bg-gray-800 border-2 border-purple-500 rounded mt-2"
+              >
+                <option value="any">Any Topic</option>
+                <option value="arrays">Arrays</option>
+                <option value="strings">Strings</option>
+                <option value="trees">Trees</option>
+                <option value="graphs">Graphs</option>
+                <option value="dp">Dynamic Programming</option>
+              </select>
+            </div>
+            <button id="findMatchBtn" class="retro-btn retro-btn-pink w-full">
+              FIND MATCH
+            </button>
+            <div id="matchmakingStatus" class="hidden text-center">
+              <div class="loading-spinner mx-auto mb-2"></div>
+              <p class="text-glow-magenta">Searching for opponent...</p>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- User Stats -->
+      <div class="retro-panel mt-6">
+        <h2 class="text-2xl text-glow-magenta mb-4">YOUR STATS</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="score-board text-center">
+            <div class="text-3xl text-glow-pink" id="userWins">0</div>
+            <div class="text-sm">WINS</div>
+          </div>
+          <div class="score-board text-center">
+            <div class="text-3xl text-glow-magenta" id="userLosses">0</div>
+            <div class="text-sm">LOSSES</div>
+          </div>
+          <div class="score-board text-center">
+            <div class="text-3xl text-glow-purple" id="userRating">1200</div>
+            <div class="text-sm">RATING</div>
+          </div>
+          <div class="score-board text-center">
+            <div class="text-3xl text-glow-pink" id="winRate">0%</div>
+            <div class="text-sm">WIN RATE</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Battle Screen -->
     <div id="battleScreen" class="hidden max-w-7xl mx-auto">
-        <!-- Battle Header -->
-        <div class="retro-panel mb-4">
-            <div class="grid grid-cols-3 gap-4 items-center">
-                <!-- Player 1 -->
-                <div class="flex items-center gap-4">
-                    <img id="player1Avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=player1" class="player-avatar">
-                    <div>
-                        <div class="text-xl text-glow-pink" id="player1Name">You</div>
-                        <div class="text-sm text-glow-purple">Level <span id="player1Level">1</span></div>
-                        <div class="text-2xl text-glow-magenta" id="player1Score">0</div>
-                    </div>
-                </div>
-
-                <!-- VS & Timer -->
-                <div class="text-center">
-                    <div class="vs-animation">VS</div>
-                    <div class="timer" id="timer">30</div>
-                    <div class="text-sm text-glow-purple">Question <span id="currentQuestion">1</span>/5</div>
-                </div>
-
-                <!-- Player 2 -->
-                <div class="flex items-center gap-4 justify-end">
-                    <div class="text-right">
-                        <div class="text-xl text-glow-pink" id="player2Name">Opponent</div>
-                        <div class="text-sm text-glow-purple">Level <span id="player2Level">1</span></div>
-                        <div class="text-2xl text-glow-magenta" id="player2Score">0</div>
-                    </div>
-                    <img id="player2Avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=player2" class="player-avatar">
-                </div>
+      <!-- Battle Header -->
+      <div class="retro-panel mb-4">
+        <div class="grid grid-cols-3 gap-4 items-center">
+          <!-- Player 1 -->
+          <div class="flex items-center gap-4">
+            <img
+              id="player1Avatar"
+              src="https://api.dicebear.com/7.x/avataaars/svg?seed=player1"
+              class="player-avatar"
+            />
+            <div>
+              <div class="text-xl text-glow-pink" id="player1Name">You</div>
+              <div class="text-sm text-glow-purple">
+                Level <span id="player1Level">1</span>
+              </div>
+              <div class="text-2xl text-glow-magenta" id="player1Score">0</div>
             </div>
+          </div>
 
-            <!-- Progress Bar -->
-            <div class="progress-bar mt-4">
-                <div class="progress-fill" id="progressBar" style="width: 20%"></div>
+          <!-- VS & Timer -->
+          <div class="text-center">
+            <div class="vs-animation">VS</div>
+            <div class="timer" id="timer">30</div>
+            <div class="text-sm text-glow-purple">
+              Question <span id="currentQuestion">1</span>/5
             </div>
+          </div>
+
+          <!-- Player 2 -->
+          <div class="flex items-center gap-4 justify-end">
+            <div class="text-right">
+              <div class="text-xl text-glow-pink" id="player2Name">
+                Opponent
+              </div>
+              <div class="text-sm text-glow-purple">
+                Level <span id="player2Level">1</span>
+              </div>
+              <div class="text-2xl text-glow-magenta" id="player2Score">0</div>
+            </div>
+            <img
+              id="player2Avatar"
+              src="https://api.dicebear.com/7.x/avataaars/svg?seed=player2"
+              class="player-avatar"
+            />
+          </div>
         </div>
 
-        <!-- Question Card -->
-        <div class="question-card">
-            <h3 class="text-2xl text-glow-magenta mb-4" id="questionTitle">Loading question...</h3>
-            <p class="text-lg mb-4" id="questionDescription"></p>
-            <div id="optionsContainer" class="space-y-2"></div>
+        <!-- Progress Bar -->
+        <div class="progress-bar mt-4">
+          <div class="progress-fill" id="progressBar" style="width: 20%"></div>
         </div>
+      </div>
 
-        <!-- Action Buttons -->
-        <div class="flex justify-center gap-4 mt-6">
-            <button id="submitAnswerBtn" class="retro-btn retro-btn-pink" disabled>SUBMIT ANSWER</button>
-            <button id="finishBattleBtn" class="retro-btn retro-btn-pink">FINISH BATTLE</button>
-        </div>
+      <!-- Question Card -->
+      <div class="question-card">
+        <h3 class="text-2xl text-glow-magenta mb-4" id="questionTitle">
+          Loading question...
+        </h3>
+        <p class="text-lg mb-4" id="questionDescription"></p>
+        <div id="optionsContainer" class="space-y-2"></div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex justify-center gap-4 mt-6">
+        <button id="submitAnswerBtn" class="retro-btn retro-btn-pink" disabled>
+          SUBMIT ANSWER
+        </button>
+        <button id="finishBattleBtn" class="retro-btn retro-btn-pink">
+          FINISH BATTLE
+        </button>
+      </div>
     </div>
 
     <!-- Results Modal -->
-    <div id="resultsModal" class="modal fixed inset-0 z-50 hidden flex items-center justify-center">
-        <div class="retro-panel max-w-2xl w-full mx-4">
-            <h2 class="text-3xl text-glow-pink text-center mb-6" id="resultTitle">BATTLE RESULTS</h2>
-            
-            <div class="grid grid-cols-2 gap-6 mb-6">
-                <div class="text-center">
-                    <img id="resultPlayer1Avatar" src="" class="player-avatar mx-auto mb-2">
-                    <div class="text-xl text-glow-magenta" id="resultPlayer1Name"></div>
-                    <div class="text-3xl text-glow-pink mt-2" id="resultPlayer1Score"></div>
-                    <div class="text-sm">Time: <span id="resultPlayer1Time"></span></div>
-                </div>
-                <div class="text-center">
-                    <img id="resultPlayer2Avatar" src="" class="player-avatar mx-auto mb-2">
-                    <div class="text-xl text-glow-magenta" id="resultPlayer2Name"></div>
-                    <div class="text-3xl text-glow-pink mt-2" id="resultPlayer2Score"></div>
-                    <div class="text-sm">Time: <span id="resultPlayer2Time"></span></div>
-                </div>
-            </div>
+    <div
+      id="resultsModal"
+      class="modal fixed inset-0 z-50 hidden flex items-center justify-center"
+    >
+      <div class="retro-panel max-w-2xl w-full mx-4">
+        <h2 class="text-3xl text-glow-pink text-center mb-6" id="resultTitle">
+          BATTLE RESULTS
+        </h2>
 
-            <div class="retro-panel mb-4">
-                <h3 class="text-xl text-glow-purple mb-2">PERFORMANCE</h3>
-                <div id="performanceDetails"></div>
+        <div class="grid grid-cols-2 gap-6 mb-6">
+          <div class="text-center">
+            <img
+              id="resultPlayer1Avatar"
+              src=""
+              class="player-avatar mx-auto mb-2"
+            />
+            <div class="text-xl text-glow-magenta" id="resultPlayer1Name"></div>
+            <div
+              class="text-3xl text-glow-pink mt-2"
+              id="resultPlayer1Score"
+            ></div>
+            <div class="text-sm">
+              Time: <span id="resultPlayer1Time"></span>
             </div>
-
-            <div class="flex justify-center gap-4">
-                <button onclick="location.reload()" class="retro-btn retro-btn-pink">PLAY AGAIN</button>
-                <button onclick="window.location.href='dashboard.html'" class="retro-btn retro-btn-pink">DASHBOARD</button>
+          </div>
+          <div class="text-center">
+            <img
+              id="resultPlayer2Avatar"
+              src=""
+              class="player-avatar mx-auto mb-2"
+            />
+            <div class="text-xl text-glow-magenta" id="resultPlayer2Name"></div>
+            <div
+              class="text-3xl text-glow-pink mt-2"
+              id="resultPlayer2Score"
+            ></div>
+            <div class="text-sm">
+              Time: <span id="resultPlayer2Time"></span>
             </div>
+          </div>
         </div>
+
+        <div class="retro-panel mb-4">
+          <h3 class="text-xl text-glow-purple mb-2">PERFORMANCE</h3>
+          <div id="performanceDetails"></div>
+        </div>
+
+        <div class="flex justify-center gap-4">
+          <button onclick="location.reload()" class="retro-btn retro-btn-pink">
+            PLAY AGAIN
+          </button>
+          <button
+            onclick="window.location.href='dashboard.html'"
+            class="retro-btn retro-btn-pink"
+          >
+            DASHBOARD
+          </button>
+        </div>
+      </div>
     </div>
 
     <script src="/js/battle.js"></script>
-</body>
+  </body>
 </html>

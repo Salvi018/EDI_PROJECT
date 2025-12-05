@@ -467,7 +467,7 @@
       };
 
       async function loadProfileData() {
-        const token = localStorage.getItem("codecade_token");
+        const token = localStorage.getItem("token");
         if (!token) return;
 
         try {
@@ -583,7 +583,7 @@
           )
             return;
 
-          const token = localStorage.getItem("codecade_token");
+          const token = localStorage.getItem("token");
           if (!token) return;
 
           try {
@@ -594,7 +594,7 @@
 
             if (res.ok) {
               alert("Profile deleted successfully");
-              localStorage.removeItem("codecade_token");
+              localStorage.removeItem("token");
               window.location.href = "index.html";
             } else {
               alert("Failed to delete profile");
